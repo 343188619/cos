@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>核 | INITIATION - 首次约拍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@300;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-primary: #e0e0e0;
+            --accent: #d4af37;
+            --highlight: #00f0ff;
+            --glass: rgba(18, 18, 18, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Noto Serif SC', serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        #cosmos {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 60%);
+        }
+
+        .main-container {
+            width: 95%;
+            max-width: 800px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+            padding-bottom: 90px;
+            animation: slideUp 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .welcome-header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .welcome-header h1 { font-family: 'Cinzel', serif; font-size: 2rem; color: #fff; margin-bottom: 5px; }
+        .welcome-header span { color: var(--highlight); font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; }
+
+        .scroll-content {
+            padding: 25px;
+            height: 60vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 20px 0 30px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+        }
+
+        .grid-cell {
+            background: rgba(10,10,10,0.9);
+            padding: 12px 5px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grid-header { font-family: 'Cinzel', serif; color: #888; font-weight: bold; background: rgba(20,20,20,0.95); }
+        .grid-highlight { color: var(--highlight); font-weight: bold; }
+
+        .notice-box {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 12px;
+            font-size: 0.8rem;
+            color: #ccc;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .service-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover, .option-card.selected {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: var(--highlight);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+        }
+
+        .option-card h3 { font-family: 'Noto Serif SC', serif; color: #fff; margin-bottom: 5px; display: flex; justify-content: space-between; font-size: 1rem; }
+        .option-card p { font-size: 0.75rem; color: #888; margin-top: 5px; }
+        .tag { font-size: 0.6rem; background: var(--highlight); color: #000; padding: 2px 6px; border-radius: 2px; }
+
+        .terms-summary { font-size: 0.75rem; color: #666; border-top: 1px solid var(--border); padding-top: 15px; }
+        .terms-list li { margin-bottom: 5px; list-style: none; position: relative; padding-left: 15px; }
+        .terms-list li::before { content: '›'; color: var(--accent); position: absolute; left: 0; }
+
+        /* 底部操作栏 */
+        .action-bar {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 15px 25px;
+            background: rgba(5,5,5,0.98);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 50;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #888;
+            cursor: pointer;
+            padding: 5px 0;
+        }
+        
+        .custom-check {
+            min-width: 16px; width: 16px; height: 16px;
+            border: 1px solid #666;
+            margin-right: 10px;
+            display: inline-block;
+            transition: 0.2s;
+            position: relative; /* 关键：为了定位对勾 */
+        }
+
+        /* === 修改点1：添加对勾样式 === */
+        .checkbox-group.active .custom-check { 
+            background: var(--highlight); 
+            border-color: var(--highlight); 
+            box-shadow: 0 0 10px var(--highlight); 
+        }
+
+        /* 绘制对勾 */
+        .checkbox-group.active .custom-check::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 5px;
+            height: 9px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* 震动动画 */
+        .shake { animation: shake 0.5s; border-color: #ff4444 !important; }
+        @keyframes shake {
+            0% { transform: translateX(0); } 25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); }
+        }
+
+        .btn-row { display: flex; gap: 15px; }
+        
+        .btn {
+            flex: 1; padding: 12px; border: none; cursor: pointer;
+            font-family: 'Cinzel', serif; letter-spacing: 1px;
+            transition: 0.3s; text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .btn-back { background: transparent; color: #666; border: 1px solid #333; }
+        .btn-pay { 
+            background: var(--accent); color: #000; 
+            opacity: 0.4; 
+        }
+        /* 只要勾选就亮起 */
+        .btn-pay.ready { opacity: 1; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+
+        /* 弹窗样式 */
+        .payment-modal, .iframe-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: 0.4s;
+        }
+        .payment-modal { background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); z-index: 100; }
+        .iframe-modal { background: rgba(0,0,0,0.95); z-index: 200; flex-direction: column; }
+        
+        .payment-modal.active, .iframe-modal.active { opacity: 1; pointer-events: all; }
+
+        .pay-card {
+            width: 85%; max-width: 400px;
+            background: #0a0a0a;
+            border: 1px solid var(--highlight);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.15);
+            padding: 25px;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: 0.5s;
+        }
+        .payment-modal.active .pay-card { transform: scale(1) translateY(0); }
+
+        .pay-amount { font-size: 2.2rem; color: var(--highlight); font-family: 'Cinzel'; margin: 10px 0; }
+        
+        .qr-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .qr-tab { padding: 5px 15px; border: 1px solid #333; color: #666; font-size: 0.8rem; transition:0.3s; cursor:pointer;}
+        .qr-tab.active { color: #fff; border-color: var(--highlight); }
+
+        .qr-display {
+            width: 180px; height: 180px; margin: 0 auto;
+            background-size: cover; background-position: center;
+            border: 2px solid rgba(255,255,255,0.1); position: relative;
+        }
+        .scan-line {
+            width: 100%; height: 2px; background: var(--highlight);
+            position: absolute; top: 0; left: 0;
+            animation: scan 2s infinite linear; box-shadow: 0 0 10px var(--highlight);
+        }
+
+        .pay-actions { margin-top: 20px; display: flex; gap: 10px; }
+        .btn-action {
+            flex: 1; padding: 10px 0; border: 1px solid #333;
+            background: transparent; color: #888; font-size: 0.85rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-action.primary { border-color: var(--highlight); color: var(--highlight); background: rgba(0,240,255,0.05); }
+
+        .iframe-container { width: 95%; height: 85%; background: #fff; display: flex; flex-direction: column; }
+        .iframe-header { background: #111; color: #fff; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel'; }
+        .wps-frame { flex: 1; border: none; width: 100%; }
+        .btn-close-iframe { background: transparent; border: 1px solid #666; color: #fff; padding: 5px 10px; }
+
+        @keyframes scan { 0% {top:0} 50% {top:100%} 100% {top:0} }
+        @keyframes slideUp { from {opacity:0; transform: translateY(50px);} to {opacity:1; transform: translateY(0);} }
+
+        @media (max-width: 768px) {
+            .main-container { height: 100vh; width: 100%; border: none; border-radius: 0; }
+            .scroll-content { height: calc(100vh - 160px); } 
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="cosmos"></canvas>
+
+    <div class="main-container">
+        <div class="welcome-header">
+            <h1>新界接入</h1>
+            <span>INITIATION PROTOCOL</span>
+        </div>
+
+        <div class="scroll-content">
+            <p style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:20px;">
+                您已激活「核」专属免费拍摄权益
+            </p>
+
+            <div class="data-grid">
+                <div class="grid-cell grid-header">项目</div>
+                <div class="grid-cell grid-header">常规</div>
+                <div class="grid-cell grid-header" style="color:var(--highlight)">特权</div>
+
+                <div class="grid-cell">跟拍费</div>
+                <div class="grid-cell" style="text-decoration: line-through; opacity:0.5">58.5</div>
+                <div class="grid-cell grid-highlight">全免</div>
+
+                <div class="grid-cell">时长</div>
+                <div class="grid-cell" style="opacity:0.5">6h</div>
+                <div class="grid-cell grid-highlight">不限</div>
+
+                <div class="grid-cell">定金</div>
+                <div class="grid-cell">-</div>
+                <div class="grid-cell" style="color:var(--accent)">¥5 (退)</div>
+            </div>
+
+            <div class="notice-box">
+                <strong>须知：</strong>支付 5.00 元为防鸽定金，拍摄结束后24小时内全额退还。
+            </div>
+
+            <h3 style="font-family:'Cinzel'; margin-bottom:15px; color:#fff;">SELECT SERVICE</h3>
+            <div class="service-options" id="serviceSection">
+                <div class="option-card" onclick="selectService(this, 'free')">
+                    <h3>免费跟拍服务 <span class="tag">HOT</span></h3>
+                    <p>不限时/不限地/底片全送 (需报销车费)</p>
+                </div>
+                
+                <div class="option-card" onclick="selectService(this, 'fixed')">
+                    <h3>定点拍摄套餐 <span class="tag">PRO</span></h3>
+                    <p>含精修/同样享受首次免费权益</p>
+                </div>
+            </div>
+
+            <div class="terms-summary">
+                <h4>TERMS</h4>
+                <ul class="terms-list">
+                    <li>服务开始前24小时内取消不退定金。</li>
+                    <li>请配合摄影师引导进行拍摄。</li>
+                </ul>
+            </div>
+            <div style="height: 60px;"></div>
+        </div>
+
+        <!-- 底部栏 -->
+        <div class="action-bar">
+            <div class="checkbox-group" id="agreeBox" onclick="toggleAgree()">
+                <div class="custom-check"></div>
+                <span>我已阅读并同意服务条款及支付定金</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-back" onclick="location.href='index.html'">不同意</button>
+                <button class="btn btn-pay" id="payBtn" onclick="tryOpenPayment()">同意并预约</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付弹窗 -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="pay-card">
+            <h2 style="font-family:'Cinzel'; margin-bottom:10px; color:#fff;">PAYMENT</h2>
+            <div class="pay-amount">¥ 5.00</div>
+            <p class="pay-desc" style="margin-bottom:20px">订单确认金 (拍摄后退还)</p>
+
+            <div class="qr-tabs">
+                <div class="qr-tab active" onclick="switchQR('wx')">微信支付</div>
+                <div class="qr-tab" onclick="switchQR('ali')">支付宝</div>
+            </div>
+
+            <div class="qr-display" id="qrDisplay">
+                <div class="scan-line"></div>
+            </div>
+            
+            <p style="margin-top:15px; font-size:0.7rem; color:#555;">扫码支付锁定档期</p>
+            
+            <div class="pay-actions">
+                <button class="btn-action secondary" onclick="closePayment()">取消</button>
+                <button class="btn-action primary" id="confirmPayBtn" onclick="confirmPayment()">我已完成支付</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 网页内嵌WPS弹窗 -->
+    <div class="iframe-modal" id="iframeModal">
+        <div class="iframe-container">
+            <div class="iframe-header">
+                <span>RESERVATION INFO</span>
+                <button class="btn-close-iframe" onclick="closeIframe()">关闭 X</button>
+            </div>
+            <iframe id="wpsIframe" class="wps-frame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('cosmos');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        function drawStars() {
+            ctx.clearRect(0, 0, width, height);
+            for(let i=0; i<40; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random()*width, Math.random()*height, Math.random()*1.5, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,255,255, ${Math.random()*0.5})`;
+                ctx.fill();
+            }
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        let selectedService = null;
+        let isAgreed = false;
+        
+        const wxQR = "https://e3f49eaa46b57.cdn.sohucs.com/2025/11/26/13/30/MTAwMTE0XzE3NjQxMzUwNDU5MDI=.png";
+        const aliQR = "https://chatbotcos.weixin.qq.com/chatbot/30-openaiassets_252b1e9c43912772d11ba5d6fca56798_469401764135091376.png";
+        
+        document.getElementById('qrDisplay').style.backgroundImage = `url('${wxQR}')`;
+
+        function selectService(el, type) {
+            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedService = type;
+            // 选择后不需要特别做什么，因为现在的核心卡点只有“条款同意”
+        }
+
+        function toggleAgree() {
+            isAgreed = !isAgreed;
+            const box = document.getElementById('agreeBox');
+            if(isAgreed) {
+                box.classList.add('active');
+                box.classList.remove('shake'); // 如果有错误震动，移除它
+            } else {
+                box.classList.remove('active');
+            }
+            updateBtnState();
+        }
+
+        function updateBtnState() {
+            const btn = document.getElementById('payBtn');
+            // === 修改点2：逻辑放宽 ===
+            // 只要勾选了同意，按钮就亮起 (不再检查 selectedService)
+            if (isAgreed) {
+                btn.classList.add('ready');
+            } else {
+                btn.classList.remove('ready');
+            }
+        }
+
+        function tryOpenPayment() {
+            // === 修改点3：点击验证 ===
+            // 只验证是否勾选了条款，不再验证是否选了服务
+            if (!isAgreed) {
+                const box = document.getElementById('agreeBox');
+                box.classList.remove('shake');
+                void box.offsetWidth; // 触发重绘
+                box.classList.add('shake');
+                return;
+            }
+
+            // 通过验证，打开支付窗
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closePayment() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        function confirmPayment() {
+            const btn = document.getElementById('confirmPayBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "VERIFYING...";
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                document.getElementById('paymentModal').classList.remove('active');
+                
+                const wpsUrl = "https://f.wps.cn/g/NI2wnaNj/";
+                const iframe = document.getElementById('wpsIframe');
+                if (iframe.src !== wpsUrl) iframe.src = wpsUrl;
+                
+                document.getElementById('iframeModal').classList.add('active');
+                
+                btn.innerText = originalText;
+                btn.style.opacity = "1";
+            }, 600);
+        }
+
+        function closeIframe() {
+            document.getElementById('iframeModal').classList.remove('active');
+        }
+
+        function switchQR(type) {
+            const tabs = document.querySelectorAll('.qr-tab');
+            const display = document.getElementById('qrDisplay');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (type === 'wx') {
+                tabs[0].classList.add('active');
+                display.style.backgroundImage = `url('${wxQR}')`;
+            } else {
+                tabs[1].classList.add('active');
+                display.style.backgroundImage = `url('${aliQR}')`;
+            }
+        }
+    </script>
+</body>
+</html>
