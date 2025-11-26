@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 关键修复：viewport设置，禁止缩放，确保尺寸正确 -->
+    <!-- viewport 保持现状 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>核 | TERMS & PRICING</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,41 +13,38 @@
         :root {
             --bg-color: #050505;
             --text-primary: #e0e0e0;
-            --text-highlight: #d4af37; /* 香槟金 */
+            --text-highlight: #d4af37;
             --glass: rgba(20, 20, 20, 0.6);
             --border: rgba(212, 175, 55, 0.2);
         }
 
-        /* 全局重置 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Noto Serif SC', serif;
-            height: 100vh; /* 兼容旧浏览器 */
-            height: 100dvh; /* 修复移动端地址栏遮挡问题 */
-            overflow: hidden; /* 锁定Body，只让卡片内部滚动 */
+            height: 100vh; 
+            height: 100dvh;
+            overflow: hidden; /* 桌面端保持隐藏 */
             display: flex;
             justify-content: center;
             align-items: center;
+            /* 桌面端保留 3D */
             perspective: 1500px;
         }
 
-        /* 动态星空背景 */
         #cosmos {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             opacity: 0.6;
-            pointer-events: none; /* 关键：背景不拦截点击 */
+            pointer-events: none;
         }
 
-        /* 主协议卡片 */
         .agreement-card {
             width: 90%;
             max-width: 700px;
-            /* 桌面端高度 */
             height: 85vh;
             max-height: 900px;
             background: var(--glass);
@@ -59,30 +56,28 @@
             display: flex;
             flex-direction: column;
             
-            /* 3D 初始状态 */
             transform-style: preserve-3d;
             will-change: transform;
-            
             animation: cardEntrance 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* 确保圆角 */
             z-index: 10;
         }
 
         .agreement-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, var(--text-highlight), transparent);
             box-shadow: 0 0 10px var(--text-highlight);
+            z-index: 5;
         }
 
-        /* 头部 */
         .header {
             padding: 30px 30px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0; /* 防止被压缩 */
+            flex-shrink: 0;
+            background: rgba(20,20,20,0.3); /* 轻微背景防透明重叠 */
+            z-index: 5;
         }
 
         .header h1 {
@@ -94,88 +89,64 @@
         }
 
         .header p {
-            font-size: 0.7rem;
-            color: #666;
-            margin-top: 5px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 0.7rem; color: #666; margin-top: 5px;
+            letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* --- 核心修复：滚动区域 --- */
+        /* --- 核心修复区域 --- */
         .content-scroll {
-            flex: 1; /* 占据剩余所有空间 */
-            overflow-y: auto; /* 允许垂直滚动 */
+            flex: 1; 
+            /* 关键修复 1: min-height: 0 允许 Flex 子项正确收缩并产生滚动 */
+            min-height: 0; 
+            overflow-y: auto;
             padding: 20px 30px;
             
-            /* 移动端惯性滚动关键属性 */
             -webkit-overflow-scrolling: touch; 
-            /* 防止滚动穿透到Body */
             overscroll-behavior-y: contain; 
             
             scrollbar-width: thin;
             scrollbar-color: var(--text-highlight) rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2; /* 确保在背景层之上 */
         }
         
-        /* 增加底部内边距，防止内容贴底 */
         .content-scroll { padding-bottom: 40px; }
-
         .content-scroll::-webkit-scrollbar { width: 4px; }
         .content-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
         .content-scroll::-webkit-scrollbar-thumb { background: var(--text-highlight); border-radius: 2px; }
 
         .section {
             margin-bottom: 30px;
-            opacity: 0;
-            transform: translateY(20px);
+            opacity: 0; transform: translateY(20px);
             animation: fadeUp 0.8s ease forwards;
         }
 
         .section h3 {
             font-family: 'Playfair Display', serif;
-            color: #fff;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            border-left: 3px solid var(--text-highlight);
-            padding-left: 10px;
+            color: #fff; font-size: 1.1rem; margin-bottom: 15px;
+            border-left: 3px solid var(--text-highlight); padding-left: 10px;
         }
 
         .section ul { list-style: none; }
         .section li {
-            font-size: 0.9rem;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 8px;
-            position: relative;
-            padding-left: 15px;
+            font-size: 0.9rem; line-height: 1.8; color: rgba(255,255,255,0.8);
+            margin-bottom: 8px; position: relative; padding-left: 15px;
         }
         .section li::before {
-            content: '•';
-            color: var(--text-highlight);
-            position: absolute;
-            left: 0;
+            content: '•'; color: var(--text-highlight); position: absolute; left: 0;
         }
 
-        /* 套餐选择样式 */
         .price-grid { display: grid; gap: 15px; }
         .price-option {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s; /* 加快响应速度 */
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            border-radius: 4px;
-            /* 解决移动端点击高亮背景色问题 */
-            -webkit-tap-highlight-color: transparent; 
+            padding: 15px; cursor: pointer; transition: all 0.2s;
+            position: relative; display: flex; flex-direction: column;
+            border-radius: 4px; -webkit-tap-highlight-color: transparent;
         }
-        
-        .price-option:active { background: rgba(255, 255, 255, 0.08); } /* 增加按压反馈 */
-
+        .price-option:active { background: rgba(255, 255, 255, 0.08); } 
         .price-option.selected {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: var(--text-highlight);
+            background: rgba(212, 175, 55, 0.1); border-color: var(--text-highlight);
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
         }
         .price-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -194,23 +165,19 @@
         }
         .highlight-text { color: var(--text-highlight); font-weight: bold; }
 
-        /* 底部 */
         .footer {
             padding: 20px 30px;
-            background: rgba(0,0,0,0.6); /* 加深底部背景，防止文字重叠看不清 */
+            background: rgba(5,5,5,0.9); /* 加深背景 */
             border-top: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0; /* 必须：防止被挤压 */
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex-shrink: 0;
+            display: flex; flex-direction: column; gap: 20px;
             z-index: 20;
         }
 
         .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; user-select: none; }
         .custom-checkbox {
             width: 20px; height: 20px; border: 1px solid #666; margin-right: 12px;
-            display: flex; align-items: center; justify-content: center; transition: all 0.3s;
-            flex-shrink: 0; /* 防止复选框变形 */
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0;
         }
         .custom-checkbox::after {
             content: ''; width: 10px; height: 10px; background: var(--text-highlight);
@@ -238,29 +205,21 @@
         }
         .btn-confirm.active:hover { background: #fff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
 
-        /* ================= 核心弹窗样式 (重要) ================= */
-        
+        /* 弹窗样式 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9);
             display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(10px);
-            /* 确保弹窗在最顶层 */
-            z-index: 9999; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px); z-index: 9999; 
         }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
 
-        /* 2. 支付弹窗层级 */
         #paymentModal { z-index: 5000; }
         .payment-content {
-            width: 90%; max-width: 400px;
-            background: #0a0a0a;
-            border: 1px solid var(--text-highlight);
-            padding: 30px;
-            text-align: center;
-            transform: scale(0.9); transition: transform 0.3s;
+            width: 90%; max-width: 400px; background: #0a0a0a;
+            border: 1px solid var(--text-highlight); padding: 30px;
+            text-align: center; transform: scale(0.9); transition: transform 0.3s;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
         .modal-overlay.show .payment-content { transform: scale(1); }
@@ -279,109 +238,89 @@
         .btn-paid { background: var(--text-highlight); color: #000; font-weight: bold; }
         .btn-close { background: transparent; border: 1px solid #444; color: #888; }
 
-        /* 3. 预约表弹窗层级 (最高) */
         #bookingModal { z-index: 9999; }
-        
         .booking-container {
-            width: 95%; height: 95vh; /* 桌面端高度 */
-            max-width: 900px;
-            background: #fff;
-            position: relative;
-            border-radius: 4px;
+            width: 95%; height: 95vh; max-width: 900px;
+            background: #fff; position: relative; border-radius: 4px;
             box-shadow: 0 0 60px rgba(0,0,0,1);
-            display: flex; flex-direction: column;
-            overflow: hidden;
+            display: flex; flex-direction: column; overflow: hidden;
         }
-
         .booking-bar {
-            height: 40px; background: #000;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px;
-            border-bottom: 1px solid var(--text-highlight);
-            color: var(--text-highlight);
-            font-size: 0.9rem;
-            flex-shrink: 0;
+            height: 40px; background: #000; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 15px; border-bottom: 1px solid var(--text-highlight);
+            color: var(--text-highlight); font-size: 0.9rem; flex-shrink: 0;
         }
-        .booking-close-btn {
-            color: #fff; background: none; border: none;
-            font-size: 24px; cursor: pointer;
-            line-height: 1; padding: 0 10px;
-        }
+        .booking-close-btn { color: #fff; background: none; border: none; font-size: 24px; cursor: pointer; line-height: 1; padding: 0 10px; }
+        .booking-iframe-wrapper { flex: 1; position: relative; width: 100%; height: 100%; background: #f5f5f5; overflow: hidden; }
+        .loading-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #333; font-size: 1rem; z-index: 1; }
+        .booking-iframe { position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; }
 
-        .booking-iframe-wrapper {
-            flex: 1; position: relative; width: 100%; height: 100%;
-            background: #f5f5f5;
-            overflow: hidden; /* 防止iframe溢出 */
-        }
-
-        .loading-text {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: #333; font-size: 1rem; z-index: 1;
-        }
-
-        .booking-iframe {
-            position: relative; z-index: 2;
-            width: 100%; height: 100%; border: none;
-            background: transparent;
-        }
-
-        /* 动画 */
         @keyframes cardEntrance {
             from { opacity: 0; transform: scale(0.9) rotateX(10deg); }
             to { opacity: 1; transform: scale(1) rotateX(0deg); }
         }
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= 移动端适配修复 (Mobile Fixes) ================= */
+        /* ================= 移动端适配 (核心修改) ================= */
         @media (max-width: 768px) {
             body {
-                /* 确保手机Body不被滚动 */
-                position: fixed; 
+                /* 修复：移除 position: fixed，这会锁死页面 */
+                /* position: fixed;  <-- 删除这行 */
                 width: 100%;
                 height: 100%;
+                overflow: hidden; /* 保持隐藏Body滚动条 */
+                
+                /* 修复：移动端移除透视，避免渲染层级问题 */
+                perspective: none; 
             }
 
             .agreement-card { 
-                /* 修复：使用dvh确保高度铺满但不被工具栏遮挡 */
-                width: 95%; 
-                height: 90dvh; 
-                margin-top: 10px; /* 顶部留白 */
+                /* 修复：使用 fixed 定位铺满屏幕，最稳妥的方案 */
+                position: fixed;
+                top: 0; 
+                left: 0;
+                width: 100%; 
+                height: 100%; 
+                max-width: none;
+                max-height: none;
+                margin: 0;
+                border: none;
+                border-radius: 0;
                 
-                /* 修复：强制移除3D效果，解决滑动冲突 */
+                /* 修复：强制移除所有 3D 属性 */
                 transform: none !important; 
                 animation: none !important;
                 perspective: none;
+                transform-style: flat;
             }
 
+            /* 增加顶部内边距，避开刘海屏 */
             .header {
-                padding: 20px 15px;
+                padding: 40px 15px 20px;
             }
 
             .header h1 { font-size: 1.4rem; }
 
             .content-scroll {
-                padding: 15px 15px; /* 减少内边距增加可读区域 */
+                padding: 10px 20px;
+                /* 确保滚动条在右侧边缘 */
+                width: 100%;
             }
 
             .price-grid { gap: 10px; }
             .price-option { padding: 12px; }
 
             .footer {
-                padding: 15px;
+                padding: 20px;
+                /* 增加底部安全距离（针对 iPhone X+） */
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
 
             .btn-group { flex-direction: row; }
             .btn { font-size: 0.9rem; padding: 12px 0; }
-
-            .price-header { flex-direction: row; align-items: center; } /* 保持价格在右边 */
+            .price-header { flex-direction: row; align-items: center; } 
             
-            /* 预约弹窗适配 */
-            .booking-container { 
-                width: 100%; 
-                height: 100dvh; 
-                border-radius: 0; 
-            }
+            .booking-container { width: 100%; height: 100dvh; border-radius: 0; }
         }
     </style>
 </head>
@@ -389,14 +328,12 @@
 
     <canvas id="cosmos"></canvas>
 
-    <!-- 主界面 -->
     <div class="agreement-card" id="card">
         <div class="header">
             <h1>服务条款 & 价目</h1>
             <p>Terms of Service & Pricing</p>
         </div>
 
-        <!-- 这里是主要滑动区域 -->
         <div class="content-scroll">
             <div class="section" style="animation-delay: 0.1s">
                 <h3>01 / 选择您的套餐</h3>
@@ -432,8 +369,7 @@
                         <div class="price-desc">单一定点拍摄，包含 8 张原片。</div>
                     </div>
                     
-                    <!-- 增加一些空白元素测试滚动 -->
-                    <div style="height: 10px;"></div>
+                    <div style="height: 50px;"></div>
                 </div>
             </div>
 
@@ -462,37 +398,32 @@
                 <span>我已阅读并同意条款，且确认选择的套餐</span>
             </div>
             <div class="btn-group">
-                <!-- 这里的 onclick 事件触发 goBack() -->
                 <button class="btn btn-cancel" onclick="goBack()">取消</button>
                 <button class="btn btn-confirm" id="confirmBtn" onclick="openPaymentModal()">同意并继续</button>
             </div>
         </div>
     </div>
 
-    <!-- 1. 支付弹窗 -->
+    <!-- 弹窗部分保持不变 -->
     <div class="modal-overlay" id="paymentModal">
         <div class="payment-content">
             <h2 class="modal-title">支付定金</h2>
-            
             <div class="price-details">
                 您选择了：<span id="modalPkgName" style="color:var(--text-highlight)">-</span><br>
                 套餐总价：¥<span id="modalPkgPrice">0</span><br>
                 <span style="margin-top:10px; display:block; color:#999;">需支付 30% 定金锁定档期</span>
                 <span class="deposit-highlight">¥<span id="modalDeposit">0.00</span></span>
             </div>
-
             <div class="qr-tabs">
                 <div class="qr-tab active" onclick="switchQR('wechat', this)">微信支付</div>
                 <div class="qr-tab" onclick="switchQR('alipay', this)">支付宝</div>
             </div>
-
             <div id="qr-wechat" class="qr-image-container active">
                 <img src="https://e3f49eaa46b57.cdn.sohucs.com/2025/11/26/13/30/MTAwMTE0XzE3NjQxMzUwNDU5MDI=.png" alt="微信支付">
             </div>
             <div id="qr-alipay" class="qr-image-container">
                 <img src="https://chatbotcos.weixin.qq.com/chatbot/30-openaiassets_252b1e9c43912772d11ba5d6fca56798_469401764135091376.png" alt="支付宝">
             </div>
-
             <div class="modal-btns">
                 <button class="modal-btn btn-paid" onclick="openBookingWindow()">我已完成支付</button>
                 <button class="modal-btn btn-close" onclick="closePaymentModal()">未支付 /稍后再说</button>
@@ -500,7 +431,6 @@
         </div>
     </div>
 
-    <!-- 2. 嵌入预约表弹窗 -->
     <div class="modal-overlay" id="bookingModal">
         <div class="booking-container">
             <div class="booking-bar">
@@ -515,14 +445,12 @@
     </div>
 
     <script>
-        // === 背景特效 ===
+        // 背景特效
         const canvas = document.getElementById('cosmos');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
-        
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
-        
         class Particle {
             constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.vx = (Math.random()-0.5)*0.2; this.vy = (Math.random()-0.5)*0.2; this.size = Math.random()*1.5; }
             update() { this.x += this.vx; this.y += this.vy; if(this.x<0||this.x>width)this.vx*=-1; if(this.y<0||this.y>height)this.vy*=-1; }
@@ -542,23 +470,24 @@
         }
         initParticles(); animate();
 
-        // === 业务逻辑 ===
+        // 业务逻辑
         let isAgreed = false;
         let selectedData = null;
         const BOOKING_URL = "https://f.wps.cn/g/6uXnlIPn";
 
-        // 3D 效果 (仅在宽屏/非触摸设备启用)
         const card = document.getElementById('card');
+        
+        // 3D 效果：修复JS判断，确保移动端完全不运行
         document.addEventListener('mousemove', (e) => {
-            // 修复：只在屏幕大于768px时启用3D倾斜，手机端禁用
-            if (window.innerWidth > 768 && !document.querySelector('.modal-overlay.show')) {
+            // 增加判断：只有非移动端才启用 3D
+            if (window.innerWidth > 768 && !('ontouchstart' in window) && !document.querySelector('.modal-overlay.show')) {
                 const xAxis = (window.innerWidth/2 - e.pageX)/40;
                 const yAxis = (window.innerHeight/2 - e.pageY)/40;
                 card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
             }
         });
-
-        // 手机端重置 transform 确保不会卡住
+        
+        // 窗口变化时重置
         window.addEventListener('resize', () => {
             if(window.innerWidth <= 768) {
                 card.style.transform = 'none';
@@ -620,7 +549,6 @@
             document.getElementById('bookingModal').classList.remove('show');
         }
 
-        // --- 核心修改：跳转到 index.html ---
         function goBack() {
             window.location.href = 'index.html';
         }
