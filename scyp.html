@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 修复1: 增加 viewport-fit=cover 适配刘海屏 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>核 | INITIATION - 首次约拍</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@300;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
@@ -12,9 +12,9 @@
         :root {
             --bg-color: #050505;
             --text-primary: #e0e0e0;
-            --accent: #d4af37;
+            --accent: #d4af37; /* 金色 */
             --highlight: #00f0ff;
-            --glass: rgba(18, 18, 18, 0.85);
+            --glass: rgba(18, 18, 18, 0.9);
             --border: rgba(255, 255, 255, 0.1);
         }
 
@@ -24,12 +24,13 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Noto Serif SC', serif;
-            min-height: 100vh;
-            overflow-x: hidden;
+            /* 修复2: 使用 dvh 确保在手机上铺满屏幕且不被地址栏遮挡 */
+            height: 100dvh; 
+            width: 100%;
+            overflow: hidden; /* 锁定 Body，只让内部元素滚动 */
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px 0;
         }
 
         #cosmos {
@@ -37,11 +38,15 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 60%);
+            pointer-events: none;
         }
 
         .main-container {
             width: 95%;
             max-width: 800px;
+            /* 桌面端高度限制 */
+            height: 85vh; 
+            max-height: 900px;
             background: var(--glass);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
@@ -49,26 +54,53 @@
             border-radius: 4px;
             box-shadow: 0 0 50px rgba(0,0,0,0.8);
             position: relative;
-            padding-bottom: 90px;
-            animation: slideUp 1s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            flex-direction: column; /* 纵向布局 */
+            overflow: hidden; /* 防止圆角被内容溢出覆盖 */
+            animation: slideUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .welcome-header {
             text-align: center;
-            padding: 30px 20px;
+            padding: 25px 20px;
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0; /* 防止头部被压缩 */
+            background: rgba(0,0,0,0.2);
         }
 
-        .welcome-header h1 { font-family: 'Cinzel', serif; font-size: 2rem; color: #fff; margin-bottom: 5px; }
+        .welcome-header h1 { font-family: 'Cinzel', serif; font-size: 1.8rem; color: #fff; margin-bottom: 5px; }
         .welcome-header span { color: var(--highlight); font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; }
 
+        /* === 修复3: 滚动区域优化 & 金色滚动条 === */
         .scroll-content {
+            flex: 1; /* 占据剩余空间 */
+            overflow-y: auto; /* 开启垂直滚动 */
             padding: 25px;
-            height: 60vh;
-            overflow-y: auto;
+            padding-bottom: 100px; /* 关键：底部留白，防止内容被按钮挡住 */
+            
+            /* 移动端丝滑滚动 */
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+
+            /* Firefox 滚动条样式 */
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) rgba(255,255,255,0.05);
         }
 
+        /* Chrome/Safari/Edge 金色滚动条定制 */
+        .scroll-content::-webkit-scrollbar {
+            width: 4px; /* 极细 */
+        }
+        .scroll-content::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02); /* 轨道微透 */
+        }
+        .scroll-content::-webkit-scrollbar-thumb {
+            background: var(--accent); /* 金色滑块 */
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); /* 金色发光 */
+        }
+
+        /* 表格样式 */
         .data-grid {
             display: grid;
             grid-template-columns: 1.5fr 1fr 1fr;
@@ -113,8 +145,12 @@
             border: 1px solid var(--border);
             padding: 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            /* 修复点击高亮背景 */
+            -webkit-tap-highlight-color: transparent;
         }
+        
+        .option-card:active { background: rgba(255,255,255,0.05); }
 
         .option-card:hover, .option-card.selected {
             background: rgba(0, 240, 255, 0.05);
@@ -130,18 +166,18 @@
         .terms-list li { margin-bottom: 5px; list-style: none; position: relative; padding-left: 15px; }
         .terms-list li::before { content: '›'; color: var(--accent); position: absolute; left: 0; }
 
-        /* 底部操作栏 */
+        /* 底部操作栏 - 固定在容器底部 */
         .action-bar {
-            position: absolute;
+            position: absolute; /* 相对于 main-container */
             bottom: 0; left: 0; width: 100%;
             padding: 15px 25px;
-            background: rgba(5,5,5,0.98);
+            background: rgba(5,5,5,0.98); /* 不透明背景防止内容透出 */
             border-top: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             gap: 15px;
             z-index: 50;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
         }
 
         .checkbox-group {
@@ -151,6 +187,7 @@
             color: #888;
             cursor: pointer;
             padding: 5px 0;
+            user-select: none;
         }
         
         .custom-check {
@@ -159,30 +196,25 @@
             margin-right: 10px;
             display: inline-block;
             transition: 0.2s;
-            position: relative; /* 关键：为了定位对勾 */
+            position: relative;
         }
 
-        /* === 修改点1：添加对勾样式 === */
         .checkbox-group.active .custom-check { 
             background: var(--highlight); 
             border-color: var(--highlight); 
             box-shadow: 0 0 10px var(--highlight); 
         }
 
-        /* 绘制对勾 */
         .checkbox-group.active .custom-check::after {
             content: '';
             position: absolute;
-            left: 4px;
-            top: 1px;
-            width: 5px;
-            height: 9px;
+            left: 4px; top: 1px;
+            width: 5px; height: 9px;
             border: solid #000;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
         }
 
-        /* 震动动画 */
         .shake { animation: shake 0.5s; border-color: #ff4444 !important; }
         @keyframes shake {
             0% { transform: translateX(0); } 25% { transform: translateX(-5px); }
@@ -203,7 +235,6 @@
             background: var(--accent); color: #000; 
             opacity: 0.4; 
         }
-        /* 只要勾选就亮起 */
         .btn-pay.ready { opacity: 1; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
 
         /* 弹窗样式 */
@@ -211,11 +242,12 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: 0.4s;
+            z-index: 1000; /* 确保层级够高 */
         }
-        .payment-modal { background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); z-index: 100; }
-        .iframe-modal { background: rgba(0,0,0,0.95); z-index: 200; flex-direction: column; }
+        .payment-modal { background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .iframe-modal { background: rgba(0,0,0,0.95); flex-direction: column; }
         
-        .payment-modal.active, .iframe-modal.active { opacity: 1; pointer-events: all; }
+        .payment-modal.active, .iframe-modal.active { opacity: 1; pointer-events: auto; }
 
         .pay-card {
             width: 85%; max-width: 400px;
@@ -254,7 +286,7 @@
         }
         .btn-action.primary { border-color: var(--highlight); color: var(--highlight); background: rgba(0,240,255,0.05); }
 
-        .iframe-container { width: 95%; height: 85%; background: #fff; display: flex; flex-direction: column; }
+        .iframe-container { width: 95%; height: 90%; background: #fff; display: flex; flex-direction: column; }
         .iframe-header { background: #111; color: #fff; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel'; }
         .wps-frame { flex: 1; border: none; width: 100%; }
         .btn-close-iframe { background: transparent; border: 1px solid #666; color: #fff; padding: 5px 10px; }
@@ -262,9 +294,25 @@
         @keyframes scan { 0% {top:0} 50% {top:100%} 100% {top:0} }
         @keyframes slideUp { from {opacity:0; transform: translateY(50px);} to {opacity:1; transform: translateY(0);} }
 
+        /* === 移动端完全适配 === */
         @media (max-width: 768px) {
-            .main-container { height: 100vh; width: 100%; border: none; border-radius: 0; }
-            .scroll-content { height: calc(100vh - 160px); } 
+            .main-container { 
+                height: 100dvh; /* 强制填满手机屏幕 */
+                width: 100%; 
+                max-height: none;
+                border: none; 
+                border-radius: 0; 
+            }
+            
+            .scroll-content { 
+                /* 增加底部留白，确保文字不被底部栏遮挡 */
+                padding-bottom: 120px; 
+            }
+            
+            .welcome-header h1 { font-size: 1.5rem; }
+            
+            .action-bar { padding: 15px; }
+            .btn { padding: 12px 0; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -316,6 +364,12 @@
                     <h3>定点拍摄套餐 <span class="tag">PRO</span></h3>
                     <p>含精修/同样享受首次免费权益</p>
                 </div>
+                
+                 <!-- 模拟更多内容，演示滚动效果 -->
+                 <div class="option-card" style="opacity:0.5; cursor:default;">
+                    <h3>更多权益开发中... <span class="tag" style="background:#333; color:#888;">LOCKED</span></h3>
+                    <p>敬请期待</p>
+                </div>
             </div>
 
             <div class="terms-summary">
@@ -323,9 +377,12 @@
                 <ul class="terms-list">
                     <li>服务开始前24小时内取消不退定金。</li>
                     <li>请配合摄影师引导进行拍摄。</li>
+                    <li>最终解释权归「核」工作室所有。</li>
                 </ul>
             </div>
-            <div style="height: 60px;"></div>
+            
+            <!-- 空白div确保能滚到底 -->
+            <div style="height: 20px;"></div>
         </div>
 
         <!-- 底部栏 -->
@@ -346,7 +403,7 @@
         <div class="pay-card">
             <h2 style="font-family:'Cinzel'; margin-bottom:10px; color:#fff;">PAYMENT</h2>
             <div class="pay-amount">¥ 5.00</div>
-            <p class="pay-desc" style="margin-bottom:20px">订单确认金 (拍摄后退还)</p>
+            <p class="pay-desc" style="margin-bottom:20px; color:#888; font-size:0.8rem;">订单确认金 (拍摄后退还)</p>
 
             <div class="qr-tabs">
                 <div class="qr-tab active" onclick="switchQR('wx')">微信支付</div>
@@ -407,7 +464,6 @@
             document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             selectedService = type;
-            // 选择后不需要特别做什么，因为现在的核心卡点只有“条款同意”
         }
 
         function toggleAgree() {
@@ -415,7 +471,7 @@
             const box = document.getElementById('agreeBox');
             if(isAgreed) {
                 box.classList.add('active');
-                box.classList.remove('shake'); // 如果有错误震动，移除它
+                box.classList.remove('shake');
             } else {
                 box.classList.remove('active');
             }
@@ -424,8 +480,6 @@
 
         function updateBtnState() {
             const btn = document.getElementById('payBtn');
-            // === 修改点2：逻辑放宽 ===
-            // 只要勾选了同意，按钮就亮起 (不再检查 selectedService)
             if (isAgreed) {
                 btn.classList.add('ready');
             } else {
@@ -434,17 +488,13 @@
         }
 
         function tryOpenPayment() {
-            // === 修改点3：点击验证 ===
-            // 只验证是否勾选了条款，不再验证是否选了服务
             if (!isAgreed) {
                 const box = document.getElementById('agreeBox');
                 box.classList.remove('shake');
-                void box.offsetWidth; // 触发重绘
+                void box.offsetWidth;
                 box.classList.add('shake');
                 return;
             }
-
-            // 通过验证，打开支付窗
             document.getElementById('paymentModal').classList.add('active');
         }
 
