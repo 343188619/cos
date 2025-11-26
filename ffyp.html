@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -26,12 +25,14 @@
             font-family: 'Noto Serif SC', serif;
             height: 100vh; 
             height: 100dvh;
-            overflow: hidden; /* 桌面端保持隐藏 */
+            /* 修复：允许body滚动 */
+            overflow: auto;
             display: flex;
             justify-content: center;
             align-items: center;
             /* 桌面端保留 3D */
             perspective: 1500px;
+            padding: 10px;
         }
 
         #cosmos {
@@ -45,7 +46,8 @@
         .agreement-card {
             width: 90%;
             max-width: 700px;
-            height: 85vh;
+            height: auto;
+            min-height: 85vh;
             max-height: 900px;
             background: var(--glass);
             backdrop-filter: blur(20px);
@@ -62,6 +64,7 @@
             position: relative;
             overflow: hidden; /* 确保圆角 */
             z-index: 10;
+            margin: 20px 0;
         }
 
         .agreement-card::before {
@@ -264,23 +267,21 @@
         /* ================= 移动端适配 (核心修改) ================= */
         @media (max-width: 768px) {
             body {
-                /* 修复：移除 position: fixed，这会锁死页面 */
-                /* position: fixed;  <-- 删除这行 */
-                width: 100%;
-                height: 100%;
-                overflow: hidden; /* 保持隐藏Body滚动条 */
-                
-                /* 修复：移动端移除透视，避免渲染层级问题 */
-                perspective: none; 
+                /* 修复：允许body滚动 */
+                overflow: auto;
+                height: auto;
+                min-height: 100dvh;
+                display: block;
+                padding: 0;
+                perspective: none;
             }
 
             .agreement-card { 
-                /* 修复：使用 fixed 定位铺满屏幕，最稳妥的方案 */
-                position: fixed;
-                top: 0; 
-                left: 0;
+                /* 修复：使用正常文档流布局 */
+                position: relative;
                 width: 100%; 
-                height: 100%; 
+                height: auto;
+                min-height: 100dvh;
                 max-width: none;
                 max-height: none;
                 margin: 0;
@@ -289,7 +290,7 @@
                 
                 /* 修复：强制移除所有 3D 属性 */
                 transform: none !important; 
-                animation: none !important;
+                animation: none;
                 perspective: none;
                 transform-style: flat;
             }
@@ -305,6 +306,8 @@
                 padding: 10px 20px;
                 /* 确保滚动条在右侧边缘 */
                 width: 100%;
+                height: auto;
+                flex: none;
             }
 
             .price-grid { gap: 10px; }
@@ -314,6 +317,7 @@
                 padding: 20px;
                 /* 增加底部安全距离（针对 iPhone X+） */
                 padding-bottom: max(20px, env(safe-area-inset-bottom));
+                position: relative;
             }
 
             .btn-group { flex-direction: row; }
