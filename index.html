@@ -1,0 +1,588 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>核 | THE NUCLEUS - 预约</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@300;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-primary: #e0e0e0;
+            --text-secondary: #8c8c8c;
+            --accent: #d4af37; /* 香槟金 */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-heavy: rgba(20, 20, 20, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Noto Serif SC', 'Playfair Display', serif;
+            overflow: hidden; 
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* 背景画布 */
+        #cosmos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* 胶片噪点纹理 */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2cpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px; /* 稍微加宽以适应可能的视觉平衡 */
+            text-align: center;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform-style: preserve-3d;
+            animation: containerFloat 6s ease-in-out infinite, fadeIn 1.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Logo 区域 */
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            letter-spacing: 0.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo::after {
+            content: 'NUCLEUS';
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 0.8rem;
+            color: var(--accent);
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 30px 0 50px 0;
+            line-height: 1.6;
+            transform: translateZ(20px);
+        }
+
+        /* 交互按钮区域 */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            perspective: 600px;
+            align-items: center;
+        }
+
+        .btn {
+            position: relative;
+            padding: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--accent);
+            transform: translateZ(30px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-sub {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-left: 10px;
+            font-family: 'Cinzel', serif;
+        }
+
+        /* 桌面端特殊布局 */
+        @media (min-width: 768px) {
+            .options {
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap; /* 允许换行以适应3个按钮 */
+            }
+            .btn {
+                width: 180px; /* 稍微缩小一点以容纳三个 */
+                height: 120px;
+                flex-direction: column;
+            }
+            .btn-sub {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+
+        /* ==================== 模态框样式 (Pricing Modal) ==================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--glass-heavy);
+            width: 90%;
+            max-width: 700px;
+            padding: 30px;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.1);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s;
+            font-family: 'Cinzel', serif;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        .price-title {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        /* 表格样式 */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .pricing-table th {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--text-secondary);
+            font-weight: 300;
+            border-bottom: 1px solid var(--accent);
+            padding: 10px;
+        }
+
+        .pricing-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+
+        .pricing-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .price-tag {
+            color: var(--accent);
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+        }
+
+        .note-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* 规则区域 */
+        .rules-box {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 15px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .rules-box h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .rules-box p {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: #d0d0d0;
+        }
+
+        .highlight {
+            color: #fff;
+            font-weight: bold;
+            border-bottom: 1px dotted var(--accent);
+        }
+
+        /* ==================== 动画关键帧 ==================== */
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-10px) rotateX(1deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 页面跳转遮罩动画 */
+        .transition-curtain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 100;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .transition-curtain.active {
+            transform: scaleY(1);
+            transform-origin: bottom;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- 3D 粒子背景 -->
+    <canvas id="cosmos"></canvas>
+    
+    <!-- 噪点层 -->
+    <div class="noise-overlay"></div>
+
+    <!-- 转场黑幕 -->
+    <div class="transition-curtain" id="curtain"></div>
+
+    <!-- 价格详情模态框 -->
+    <div class="modal-overlay" id="pricingModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closePricing()">×</div>
+            <h2 class="price-title">服务与定价 | Pricing</h2>
+            
+            <div class="table-wrapper">
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>服务项目</th>
+                            <th>价格</th>
+                            <th>内容详情</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>跟拍服务</td>
+                            <td class="price-tag">¥58.5</td>
+                            <td>6小时 / 不限地点</td>
+                            <td class="note-text">超时¥14.7/h<br>车费实报实销</td>
+                        </tr>
+                        <tr>
+                            <td>定点套餐 A</td>
+                            <td class="price-tag">¥26.4</td>
+                            <td>单一地点 / 4张原片</td>
+                            <td class="note-text">车费实报实销</td>
+                        </tr>
+                        <tr>
+                            <td>定点套餐 B</td>
+                            <td class="price-tag">¥38.6</td>
+                            <td>单一地点 / 6张原片</td>
+                            <td class="note-text">车费实报实销</td>
+                        </tr>
+                        <tr>
+                            <td>定点套餐 C</td>
+                            <td class="price-tag">¥49.8</td>
+                            <td>单一地点 / 8张原片</td>
+                            <td class="note-text">车费实报实销</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="rules-box">
+                <h4>预约须知 & 定金 (Deposit)</h4>
+                <p>❖ <strong>首次约拍：</strong><span class="highlight">全额免费</span> (仅需缴纳 ¥5.00 定金锁定档期)。</p>
+                <p>❖ <strong>再次/付费约拍：</strong>需缴纳总价值 <span class="highlight">30%</span> 作为定金。</p>
+                <p style="font-size: 0.8rem; margin-top:10px; opacity: 0.6;">* 定金用于确保双方时间，详情请咨询。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo">核</div>
+        
+        <p class="quote">
+            “Time is a lens, and memory is the light that passes through it.”<br>
+            <span style="font-size: 0.8em; opacity: 0.7; margin-top: 5px; display:block;">— 时间即透镜，记忆乃光影 —</span>
+        </p>
+
+        <div class="options">
+            <!-- 新增的了解详情按钮 -->
+            <a onclick="openPricing()" class="btn">
+                <span>了解详情</span>
+                <span class="btn-sub">Details & Pricing</span>
+            </a>
+
+            <a onclick="navigateTo('scyp.html')" class="btn">
+                <span>首次约拍</span>
+                <span class="btn-sub">First Encounter</span>
+            </a>
+            <a onclick="navigateTo('ffyp.html')" class="btn">
+                <span>再次约拍</span>
+                <span class="btn-sub">Reunion</span>
+            </a>
+        </div>
+
+        <footer>
+            COPYRIGHT © 核 PHOTOGRAPHY<br>
+            <span style="font-size: 0.6em">DESIGNED FOR SOUL</span>
+        </footer>
+    </div>
+
+    <script>
+        // === 3D 粒子系统逻辑 (保持不变) ===
+        const canvas = document.getElementById('cosmos');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        const isMobile = window.innerWidth < 768;
+        const particleCount = isMobile ? 60 : 120; 
+        const connectionDistance = isMobile ? 100 : 150;
+        let mouse = { x: null, y: null };
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+                this.depth = Math.random(); 
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 200) {
+                        const force = (200 - distance) / 200;
+                        this.vx += (dx / distance) * force * 0.05;
+                        this.vy += (dy / distance) * force * 0.05;
+                    }
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                let alpha = (this.depth * 0.5 + 0.1).toString();
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                let s = this.size * (this.depth + 0.5);
+                ctx.arc(this.x, this.y, s, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        let opacity = (1 - distance / connectionDistance) * 0.15 * particles[i].depth;
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+            const moveX = (e.x - width / 2) * 0.01;
+            const moveY = (e.y - height / 2) * 0.01;
+            canvas.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+        // === 模态框逻辑 ===
+        function openPricing() {
+            document.getElementById('pricingModal').classList.add('active');
+        }
+
+        function closePricing() {
+            document.getElementById('pricingModal').classList.remove('active');
+        }
+
+        // 点击背景关闭模态框
+        document.getElementById('pricingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePricing();
+            }
+        });
+
+        // === 页面跳转逻辑 ===
+        function navigateTo(url) {
+            const curtain = document.getElementById('curtain');
+            const container = document.querySelector('.container');
+            container.style.transition = 'all 0.6s ease';
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(50px) scale(0.9)';
+            curtain.classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 800);
+        }
+
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>
