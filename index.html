@@ -256,6 +256,7 @@
                 flex-direction: row;
                 justify-content: center;
                 gap: 20px;
+                flex-wrap: wrap; /* 关键修改：允许换行以容纳4个按钮 */
             }
             .btn {
                 width: 180px; 
@@ -597,6 +598,12 @@
             <a onclick="openPricing()" class="btn">
                 <span>了解详情</span>
                 <span class="btn-sub">Details & Pricing</span>
+            </a>
+
+            <!-- 新增客片例图按钮 -->
+            <a onclick="navigateTo('lt.html')" class="btn">
+                <span>客片例图</span>
+                <span class="btn-sub">Gallery & Works</span>
             </a>
 
             <a onclick="navigateTo('scyp.html')" class="btn">
