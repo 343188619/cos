@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
@@ -298,24 +299,6 @@
         .btn-paid { background: var(--accent); color: #fff; font-weight: bold; }
         .btn-close { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); }
 
-        /* WPS Iframe Modal */
-        #bookingModal { z-index: 9999; }
-        .booking-container {
-            width: 95%; height: 95vh; max-width: 900px;
-            background: #fff; position: relative; border-radius: 4px;
-            box-shadow: 0 0 60px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-        .booking-bar {
-            height: 45px; background: #1a1a1a; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px; border-bottom: 1px solid var(--accent);
-            color: #fff; font-size: 0.9rem; flex-shrink: 0;
-        }
-        .booking-close-btn { color: #fff; background: none; border: none; font-size: 24px; cursor: pointer; line-height: 1; padding: 0 10px; }
-        .booking-iframe-wrapper { flex: 1; position: relative; width: 100%; height: 100%; background: #f5f5f5; overflow: hidden; }
-        .loading-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #333; font-size: 1rem; z-index: 1; }
-        .booking-iframe { position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; }
-
         @keyframes cardEntrance {
             from { opacity: 0; transform: scale(0.95) rotateX(5deg); }
             to { opacity: 1; transform: scale(1) rotateX(0deg); }
@@ -340,7 +323,6 @@
             .footer { padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); position: relative; }
             .btn-group { flex-direction: row; }
             .btn { font-size: 0.9rem; padding: 12px 0; }
-            .booking-container { width: 100%; height: 100dvh; border-radius: 0; }
         }
     </style>
 </head>
@@ -447,7 +429,6 @@
                 <div class="qr-tab" onclick="switchQR('alipay', this)">支付宝</div>
             </div>
             
-            <!-- 更新后的支付二维码 URL -->
             <div id="qr-wechat" class="qr-image-container active">
                 <img src="https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697883297a09f.webp" alt="微信支付">
             </div>
@@ -458,20 +439,6 @@
             <div class="modal-btns">
                 <button class="modal-btn btn-paid" onclick="openBookingWindow()">我已完成支付</button>
                 <button class="modal-btn btn-close" onclick="closePaymentModal()">未支付 /稍后再说</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 预约表格嵌入 -->
-    <div class="modal-overlay" id="bookingModal">
-        <div class="booking-container">
-            <div class="booking-bar">
-                <span>预约信息填写</span>
-                <button class="booking-close-btn" onclick="closeBookingModal()">×</button>
-            </div>
-            <div class="booking-iframe-wrapper">
-                <div class="loading-text">正在加载预约表...</div>
-                <iframe src="" id="bookingIframe" class="booking-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
             </div>
         </div>
     </div>
@@ -612,19 +579,12 @@
         }
 
         function openBookingWindow() {
+            // 关闭支付弹窗
             closePaymentModal();
+            // 直接跳转到表单页面，解决微信环境禁止 iframe 登录的问题
             setTimeout(() => {
-                const bookingModal = document.getElementById('bookingModal');
-                const iframe = document.getElementById('bookingIframe');
-                if (!iframe.getAttribute('src')) {
-                    iframe.src = BOOKING_URL;
-                }
-                bookingModal.classList.add('show');
+                window.location.href = BOOKING_URL;
             }, 300);
-        }
-
-        function closeBookingModal() {
-            document.getElementById('bookingModal').classList.remove('show');
         }
 
         function goBack() {
