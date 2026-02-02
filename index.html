@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>核 | THE NUCLEUS - 预约</title>
+    <title>核 | THE NUCLEUS - 官方公告与预约</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
@@ -16,18 +16,17 @@
             --text-primary: #1a1a1a;  
             --text-secondary: #666666;
             --accent: #bfa15f;        /* 哑光金 */
+            --warning: #d9534f;       /* 警示红 */
             
-            /* 调整了玻璃磨砂的透明度，以适应图片背景 */
             --glass: rgba(244, 244, 240, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.2);
             --glass-shadow: 0 20px 40px rgba(0,0,0,0.08);
             
             --btn-bg: rgba(255,255,255,0.3);
             --btn-hover: rgba(255,255,255,0.6);
-            --modal-bg: rgba(255, 255, 255, 0.95);
+            --modal-bg: rgba(255, 255, 255, 0.98);
             --curtain-color: #1a1a1a;
             
-            /* 背景遮罩浓度 (浅色模式下稍微提亮) */
             --bg-overlay: rgba(255, 255, 255, 0.1); 
         }
 
@@ -35,8 +34,9 @@
         [data-theme="dark"] {
             --bg-color: #080808;
             --text-primary: #e0e0e0;
-            --text-secondary: #aaaaaa; /* 稍微提亮次级文字 */
+            --text-secondary: #aaaaaa; 
             --accent: #d4af37;
+            --warning: #ff6b6b;
             
             --glass: rgba(15, 15, 15, 0.75);
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -44,10 +44,9 @@
             
             --btn-bg: rgba(0,0,0,0.3);
             --btn-hover: rgba(50,50,50,0.4);
-            --modal-bg: rgba(15, 15, 15, 0.95);
+            --modal-bg: rgba(20, 20, 20, 0.98);
             --curtain-color: #000000;
 
-            /* 背景遮罩浓度 (深色模式下压暗背景，突出文字) */
             --bg-overlay: rgba(0, 0, 0, 0.6); 
         }
 
@@ -72,7 +71,7 @@
             perspective: 1000px;
         }
 
-        /* === 动态轮播背景 (Slideshow) === */
+        /* === 动态轮播背景 === */
         #bg-slideshow {
             position: fixed;
             top: 0;
@@ -93,7 +92,6 @@
             background-position: center;
             opacity: 0;
             transform: scale(1.05);
-            /* 交叉淡入淡出 + 缓慢缩放 (Ken Burns Effect) */
             transition: opacity 1.5s ease-in-out, transform 8s linear;
         }
 
@@ -102,7 +100,6 @@
             transform: scale(1);
         }
 
-        /* 背景统一遮罩与模糊 (保证文字可读性) */
         #bg-overlay-filter {
             position: fixed;
             top: 0;
@@ -111,11 +108,10 @@
             height: 100%;
             z-index: -1;
             background-color: var(--bg-overlay);
-            backdrop-filter: blur(4px); /* 轻微模糊，让背景更有质感 */
+            backdrop-filter: blur(4px);
             transition: background-color 0.5s ease;
         }
 
-        /* 纸张纹理叠加 */
         .texture-overlay {
             position: fixed;
             top: 0;
@@ -170,7 +166,7 @@
             text-align: center;
             padding: 50px 40px;
             background: var(--glass);
-            backdrop-filter: blur(25px); /* 加强容器模糊 */
+            backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 4px; 
@@ -180,7 +176,6 @@
             transform: translateY(20px);
         }
 
-        /* Logo 区域 */
         .logo {
             font-family: 'Cinzel', serif;
             font-size: 3.5rem;
@@ -209,7 +204,7 @@
             color: var(--text-secondary);
             margin: 35px 0 45px 0;
             line-height: 1.8;
-            text-shadow: 0 1px 1px rgba(255,255,255,0.1); /* 增加文字可读性 */
+            text-shadow: 0 1px 1px rgba(255,255,255,0.1);
         }
 
         /* 按钮区域 */
@@ -258,7 +253,14 @@
             text-transform: uppercase;
         }
 
-        /* 按钮悬停效果 - 简约线条 */
+        .btn-special {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+        .btn-special::before {
+             background: var(--warning);
+        }
+
         .btn::before {
             content: '';
             position: absolute;
@@ -277,12 +279,39 @@
             border-color: var(--accent);
             transform: translateY(-2px);
         }
+        
+        .btn-special:hover {
+            border-color: var(--warning);
+        }
 
         .btn:hover::before {
             transform: scaleY(1);
         }
+        
+        /* 确认按钮样式 */
+        .btn-confirm {
+            margin-top: 20px;
+            background: var(--warning);
+            color: #fff !important;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-confirm:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 83, 79, 0.4);
+        }
 
-        /* 桌面端布局 */
         @media (min-width: 768px) {
             .options {
                 flex-direction: row;
@@ -296,7 +325,7 @@
             }
         }
 
-        /* === 联系方式栏 === */
+        /* 联系方式 */
         .contact-bar {
             display: flex;
             justify-content: center;
@@ -338,7 +367,7 @@
             fill: var(--accent);
         }
 
-        /* === 复制提示 (Toast) === */
+        /* Toast */
         #copy-toast {
             position: fixed;
             top: 50%;
@@ -366,13 +395,6 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-        #copy-toast span {
-            color: var(--accent);
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-
-        /* Footer */
         footer {
             color: var(--text-secondary);
             font-size: 0.65rem;
@@ -382,7 +404,7 @@
             opacity: 0.7;
         }
 
-        /* === 模态框 (Pricing) === */
+        /* === 模态框通用 === */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -411,8 +433,8 @@
 
         .modal-content {
             background: var(--modal-bg);
-            width: 90%;
-            max-width: 650px;
+            width: 92%;
+            max-width: 750px;
             padding: 40px;
             border: 1px solid var(--glass-border);
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
@@ -422,6 +444,13 @@
             max-height: 85vh;
             overflow-y: auto;
             border-radius: 4px;
+        }
+        
+        /* 针对小屏幕适配预约警告弹窗 */
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 30px 20px;
+            }
         }
 
         .modal-overlay.active .modal-content {
@@ -438,12 +467,99 @@
             cursor: pointer;
             transition: color 0.3s;
             font-weight: 300;
+            z-index: 10;
         }
 
         .close-modal:hover {
             color: var(--accent);
         }
 
+        /* 公告特定样式 */
+        .announcement-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .announcement-text h3 {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 5px;
+        }
+        
+        .announcement-text p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .announcement-text strong {
+            font-weight: 700;
+        }
+
+        /* 拒接名单警告框 */
+        .refusal-box {
+            margin-top: 10px;
+            padding: 25px;
+            border: 1px solid var(--warning);
+            background: rgba(217, 83, 79, 0.05); /* 淡淡的红色背景 */
+            border-radius: 4px;
+            text-align: left;
+        }
+
+        .refusal-box h4 {
+            color: var(--warning);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-family: 'Noto Serif SC', serif;
+            display: flex;
+            align-items: center;
+        }
+        
+        .refusal-box h4::before {
+            content: '!';
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: 24px;
+            background: var(--warning);
+            color: #fff;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .refusal-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
+        .refusal-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .refusal-list li::before {
+            content: '×';
+            position: absolute;
+            left: 0;
+            color: var(--warning);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* 定价样式 */
         .price-title {
             font-family: 'Cinzel', serif;
             color: var(--text-primary);
@@ -457,7 +573,6 @@
             color: var(--accent);
         }
 
-        /* 表格样式 */
         .pricing-table {
             width: 100%;
             border-collapse: collapse;
@@ -494,7 +609,6 @@
             line-height: 1.4;
         }
 
-        /* 规则区域 */
         .rules-box {
             background: var(--btn-bg);
             border-left: 2px solid var(--accent);
@@ -522,12 +636,10 @@
             border-bottom: 1px solid var(--accent);
         }
 
-        /* 动画 */
         @keyframes fadeIn {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 转场遮罩 */
         .transition-curtain {
             position: fixed;
             top: 0;
@@ -559,10 +671,8 @@
         <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890887448c.webp')"></div>
     </div>
 
-    <!-- 背景遮罩 (用于调整图片亮度/模糊度以确保文字可读) -->
+    <!-- 背景遮罩 -->
     <div id="bg-overlay-filter"></div>
-    
-    <!-- 纸张噪点纹理 -->
     <div class="texture-overlay"></div>
 
     <!-- 深浅色切换按钮 -->
@@ -574,7 +684,74 @@
     <div class="transition-curtain" id="curtain"></div>
     <div id="copy-toast"><span>✓</span> COPIED TO CLIPBOARD</div>
 
-    <!-- 定价模态框 -->
+    <!-- 1. 官方公告弹窗 (进页面自动显示) -->
+    <div class="modal-overlay" id="announcementModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeAnnouncement()">×</div>
+            <h2 class="price-title" style="color: var(--warning);">官方公告 <span>|</span> NOTICE</h2>
+            
+            <div class="announcement-text">
+                <p><strong>关于我方与“缺单版的大G（詩）”相关争议的官方公告</strong></p>
+                <p>尊敬的社会各界：</p>
+                <p>为澄清事实真相、明确法律边界、规范争议处置，现就我方摄影团队（全体成员均为未成年人）与微信群“大G的福利约妆群”群主“缺单版的大G（詩）”（以下简称“相对方”）之间的相关争议，依据《中华人民共和国民法典》《中华人民共和国治安管理处罚法》等法律法规，发布本公告，供社会各界知悉。</p>
+
+                <h3>一、基本事实陈述</h3>
+                <p><strong>（一）合作性质与主体属性</strong></p>
+                <p>我方系未成年人自发组建的摄影兴趣团队，非商业主体，无营利经营资质。我方与相对方达成无偿互勉约拍合意，全程投入时间、精力完成拍摄及后期制作，未收取任何费用，合作属兴趣导向的无偿互助行为。</p>
+                
+                <p><strong>（二）行业从业自由的法律界定</strong></p>
+                <p>我方此前虽在相关群聊作出口头“退出摄影行业”表述，但我国现行法律法规未规定“口头承诺退出行业后禁止重新进入”。依据《民法典》第五条，是否从事摄影创作、何时开展或终止相关活动，系我方合法民事权利，不受口头表述及他人非法干涉。</p>
+
+                <p><strong>（三）照片使用与传播的客观情况</strong></p>
+                <p>1. 约拍后，我方因内部沟通失误，一名成员将相关宣传海报转发至相对方群聊。海报无直接照片，传播路径隐蔽，曝光极有限。<br>
+                2. 我方将照片上传至自建展示网站仅用于技术展示，未通过相对方照片产生任何付费订单，不构成法律意义上的“商用”行为。<br>
+                3. 争议发生后，我方已第一时间彻底删除所有涉及相对方的照片。<br>
+                4. <strong>基于本次争议，我方决定：取消首次免费约拍服务。</strong></p>
+
+                <h3>二、法律关系界定</h3>
+                <p><strong>（一）我方照片使用行为的法律性质</strong></p>
+                <p>我方行为无营利目的、无主观恶意、未丑化相对方，且已及时补救。该行为不构成肖像权侵权，仅为民事主体间因沟通失误引发的一般民事争议。</p>
+
+                <p><strong>（二）相对方相关行为的法律评价</strong></p>
+                <p>相对方及部分群成员在公开群聊中，对我方实施了侮辱（使用“精神病”等词汇）、威胁及公开讨论我方病情隐私的行为。依据《治安管理处罚法》及《民法典》，上述行为涉嫌违法。</p>
+
+                <h3>三、我方立场与处理原则</h3>
+                <p><strong>（一）民事争议处理</strong></p>
+                <p>我方已彻底删除全部照片。若相对方坚持认为侵权，可依法提起民事诉讼，我方将依法配合。若不诉讼，本次争议即告一段落。</p>
+
+                <p><strong>（二）合法权益维护</strong></p>
+                <p>针对相对方的侮辱、威胁及泄露隐私行为，我方已固定完整证据。若相对方提起诉讼，我方将在监护人陪同下向公安机关报案，维护我方合法权益。</p>
+
+                <p><strong>（三）行业从业与服务权利</strong></p>
+                <p>我方调整约拍服务（取消首次免费约拍、明确不接待特定人员），系行使合法自主选择权，任何主体无权干涉。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 预约警告弹窗 (点击立即约拍触发) -->
+    <div class="modal-overlay" id="bookingWarningModal">
+        <div class="modal-content" style="max-width: 550px; text-align: center;">
+            <div class="close-modal" onclick="closeBookingWarning()">×</div>
+            <h2 class="price-title" style="color: var(--warning); margin-bottom: 20px;">预约前告知 <span>|</span> NOTICE</h2>
+            
+            <div class="refusal-box">
+                <h4>重点告知：恕不接待以下人员</h4>
+                <ul class="refusal-list">
+                    <li>在“缺单版的大G（詩）”处化妆的人员</li>
+                    <li>于本次争议中对我方实施嘲讽、恶意贬低及辱骂行为的人员</li>
+                </ul>
+                <p style="font-size: 0.8rem; margin-top: 15px; color: var(--text-secondary); border-top: 1px solid var(--warning); padding-top: 10px;">
+                    * 该决定系我方合法自主选择权，不违反任何法律法规。
+                </p>
+            </div>
+
+            <button class="btn-confirm" onclick="proceedToBooking()">
+                我已知晓，继续预约
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. 定价模态框 -->
     <div class="modal-overlay" id="pricingModal">
         <div class="modal-content">
             <div class="close-modal" onclick="closePricing()">×</div>
@@ -621,8 +798,8 @@
 
             <div class="rules-box">
                 <h4>预约须知 & 定金 (Deposit)</h4>
-                <p>❖ <strong>首次约拍：</strong><span class="highlight">全额免费</span> (仅需缴纳 ¥5.00 定金锁定档期)。</p>
-                <p>❖ <strong>再次/付费约拍：</strong>需缴纳总价值 <span class="highlight">30%</span> 作为定金。</p>
+                <p>❖ <strong>预约政策调整：</strong>由于近期争议，<span class="highlight">首次免费约拍服务已取消</span>。</p>
+                <p>❖ <strong>定金缴纳：</strong>所有约拍需缴纳总价值 <span class="highlight">30%</span> 作为定金以锁定档期。</p>
             </div>
         </div>
     </div>
@@ -646,14 +823,18 @@
                 <span class="btn-sub">Gallery & Works</span>
             </a>
 
-            <a onclick="navigateTo('scyp.html')" class="btn">
-           
-                <a onclick="navigateTo('ffyp.html')" class="btn">
+            <!-- 点击触发警告弹窗，而非直接跳转 -->
+            <a onclick="openBookingWarning()" class="btn">
                 <span>立即约拍</span>
-                <span class="btn-sub">Reunion</span>
+                <span class="btn-sub">Booking</span>
+            </a>
+            
+            <a onclick="openAnnouncement()" class="btn btn-special">
+                <span>官方公告</span>
+                <span class="btn-sub">Public Notice</span>
             </a>
         </div>
-    </a>
+
         <div class="contact-bar">
             <div class="contact-pill" onclick="copyText('kck_wepo2021', '微信')">
                 <svg viewBox="0 0 24 24"><path d="M17.4,12.7c0-3.3-3-6-6.8-6C6.8,6.7,3.8,9.4,3.8,12.7c0,1.9,1,3.6,2.6,4.7c0.3,0.1,0.4,0.4,0.3,0.7l-0.6,2c-0.1,0.3,0.2,0.6,0.5,0.4l2.4-1.3c0.2-0.1,0.5-0.1,0.7,0c0.8,0.3,1.6,0.4,2.5,0.4C14.4,19.6,17.4,16.6,17.4,12.7z M20.5,14c0-2.6-2.6-4.8-5.7-4.8c-3.1,0-5.7,2.1-5.7,4.8c0,2.6,2.6,4.8,5.7,4.8c0.7,0,1.4-0.1,2-0.3c0.2-0.1,0.4-0.1,0.6,0l1.9,1.1c0.2,0.1,0.5-0.1,0.4-0.3l-0.5-1.6c-0.1-0.2,0-0.5,0.2-0.6C20,16.5,20.5,15.3,20.5,14z"/></svg>
@@ -700,7 +881,7 @@
         // === 2. 背景轮播逻辑 ===
         const slides = document.querySelectorAll('.slide');
         let currentSlide = 0;
-        const slideInterval = 6000; // 6秒切换一次
+        const slideInterval = 6000; 
 
         function nextSlide() {
             slides[currentSlide].classList.remove('active');
@@ -708,10 +889,9 @@
             slides[currentSlide].classList.add('active');
         }
 
-        // 启动轮播
         setInterval(nextSlide, slideInterval);
 
-        // === 3. 模态框逻辑 ===
+        // === 3. 定价模态框逻辑 ===
         function openPricing() {
             document.getElementById('pricingModal').classList.add('active');
         }
@@ -726,7 +906,51 @@
             }
         });
 
-        // === 4. 页面跳转逻辑 ===
+        // === 4. 官方公告模态框逻辑 (自动弹出) ===
+        function openAnnouncement() {
+            document.getElementById('announcementModal').classList.add('active');
+        }
+
+        function closeAnnouncement() {
+            document.getElementById('announcementModal').classList.remove('active');
+        }
+
+        document.getElementById('announcementModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAnnouncement();
+            }
+        });
+
+        // 页面加载后自动弹出公告
+        window.onload = function() {
+            setTimeout(openAnnouncement, 500);
+        }
+
+        // === 5. 预约警告弹窗逻辑 (点击按钮触发) ===
+        function openBookingWarning() {
+            document.getElementById('bookingWarningModal').classList.add('active');
+        }
+
+        function closeBookingWarning() {
+            document.getElementById('bookingWarningModal').classList.remove('active');
+        }
+
+        // 确认后跳转
+        function proceedToBooking() {
+            closeBookingWarning();
+            // 延迟一点时间让弹窗关闭动画播放完，体验更好
+            setTimeout(() => {
+                navigateTo('ffyp.html');
+            }, 300);
+        }
+
+        document.getElementById('bookingWarningModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBookingWarning();
+            }
+        });
+
+        // === 6. 页面跳转逻辑 ===
         function navigateTo(url) {
             const curtain = document.getElementById('curtain');
             const container = document.querySelector('.container');
@@ -739,7 +963,7 @@
             }, 800);
         }
 
-        // === 5. 复制功能逻辑 ===
+        // === 7. 复制功能逻辑 ===
         function copyText(text, label) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
