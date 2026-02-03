@@ -2,15 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 增加 viewport-fit=cover 适配刘海屏 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>核 摄影 | CORE PHOTOGRAPHY</title>
     <style>
         /* --- 核心基础设置 --- */
         :root {
             --bg-color: #000000;
             --text-main: #e0e0e0;
-            --accent: #ff3333; /* 核能红 */
-            --thumb-height: 60px;
+            --accent: #ff3333; 
         }
 
         * {
@@ -18,10 +18,8 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            /* 禁止文字选择 */
             user-select: none;
             -webkit-user-select: none;
-            /* 禁止长按弹出菜单 */
             -webkit-touch-callout: none;
         }
 
@@ -43,10 +41,11 @@
             left: 0;
             width: 100%;
             padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top)); /* 适配刘海 */
             z-index: 100;
-            pointer-events: none; /* 让点击穿透，不影响图片滑动 */
+            pointer-events: none;
             text-align: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
 
         .brand-name {
@@ -65,7 +64,6 @@
             letter-spacing: 3px;
             opacity: 0.7;
             margin-top: 4px;
-            font-family: Arial, sans-serif;
         }
 
         /* --- 返回主页按钮 --- */
@@ -73,6 +71,7 @@
             position: fixed;
             top: 20px;
             left: 20px;
+            top: max(20px, env(safe-area-inset-top)); /* 适配刘海 */
             z-index: 101;
             pointer-events: auto;
             width: 36px;
@@ -98,9 +97,10 @@
             color: #fff;
             font-size: 18px;
             font-weight: bold;
+            margin-top: -2px;
         }
 
-        /* --- 2. 主画廊容器 (Scroll Snap) --- */
+        /* --- 2. 主画廊容器 --- */
         .gallery-viewport {
             flex: 1;
             width: 100%;
@@ -111,7 +111,6 @@
             display: flex;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
-            position: relative;
         }
         .gallery-viewport::-webkit-scrollbar { display: none; }
 
@@ -126,18 +125,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #050505;
+            background: #000;
         }
 
-        /* 图片层 */
+        /* 图片样式 */
         .slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* 完整显示图片，不裁切 */
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
             opacity: 0;
             transform: scale(1.05);
             transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-            pointer-events: none; /* 关键：禁止直接点击图片 */
+            /* 禁止拖拽图片 */
+            -webkit-user-drag: none;
         }
 
         .slide.active img {
@@ -145,8 +147,8 @@
             transform: scale(1);
         }
 
-        /* --- 3. 关键保护层 (透明盾牌) --- */
-        /* 这个层覆盖在图片上，拦截所有长按和右键事件 */
+        /* 保护层：如果你希望禁止右键保存，保留这个。
+           注意：这会阻止双指放大。如果需要放大，需删除此层并仅依赖 oncontextmenu */
         .protection-layer {
             position: absolute;
             top: 0;
@@ -157,7 +159,7 @@
             background: transparent;
         }
 
-        /* --- 4. 底部缩略图导航 (快速切换) --- */
+        /* --- 3. 底部缩略图 --- */
         .thumbs-container {
             height: 80px;
             width: 100%;
@@ -167,6 +169,7 @@
             align-items: center;
             overflow-x: auto;
             padding: 0 10px;
+            padding-bottom: env(safe-area-inset-bottom); /* 适配底部横条 */
             z-index: 100;
         }
 
@@ -196,7 +199,7 @@
             pointer-events: none;
         }
 
-        /* --- 加载动画 --- */
+        /* --- Loading --- */
         #loader {
             position: fixed;
             top: 0;
@@ -225,19 +228,10 @@
             letter-spacing: 2px;
             color: #666;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* 错误提示 */
-        .error-msg {
-            color: #555;
-            font-size: 12px;
-            position: absolute;
-            z-index: -1;
-        }
     </style>
 </head>
-<body oncontextmenu="return false"> <!-- 全局禁止右键 -->
+<body oncontextmenu="return false">
 
     <!-- 加载页 -->
     <div id="loader">
@@ -245,27 +239,18 @@
         <div class="loading-text">LOADING CORE...</div>
     </div>
 
-    <!-- 返回主页按钮 -->
-    <a href=" " class="back-home-btn" title="返回主页"></a >
+    <!-- 修复：href 改为 # 或者你的实际主页链接，例如 index.html -->
+    <a href="#" class="back-home-btn" title="返回主页"></a>
 
-    <!-- 顶部品牌 -->
     <div class="header">
         <div class="brand-name">核 摄影</div>
         <div class="brand-sub">CORE VISION</div>
     </div>
 
-    <!-- 主画廊 -->
-    <div class="gallery-viewport" id="galleryViewport">
-        <!-- JS生成 -->
-    </div>
-
-    <!-- 底部缩略图 -->
-    <div class="thumbs-container" id="thumbsContainer">
-        <!-- JS生成 -->
-    </div>
+    <div class="gallery-viewport" id="galleryViewport"></div>
+    <div class="thumbs-container" id="thumbsContainer"></div>
 
     <script>
-        // 原始图片链接
         const rawImages = [
             "https://img.yohuo.eu.org/1770026410148.jpg",
             "https://img.yohuo.eu.org/1770026414751.jpg",
@@ -286,14 +271,9 @@
             "https://img.yohuo.eu.org/1770026469047.jpeg"
         ];
 
-        // --- 核心优化：生成 CDN 加速链接 ---
-        // 使用 wsrv.nl 将图片转换为 WebP 并进行压缩，大幅提升国内加载速度
+        // 图片优化参数
         const getOptimizedUrl = (url, width = 1080) => {
-            // 去除 https:// 前缀以适配 CDN 参数
             const cleanUrl = url.replace(/^https?:\/\//, '');
-            // &output=webp: 强制 WebP 格式
-            // &w={width}: 限制宽度，减少流量
-            // &q=80: 80% 质量，肉眼无损但体积更小
             return `https://wsrv.nl/?url=${cleanUrl}&w=${width}&output=webp&q=80`;
         };
 
@@ -302,32 +282,27 @@
         const fragmentSlides = document.createDocumentFragment();
         const fragmentThumbs = document.createDocumentFragment();
 
-        // 动态生成内容
         rawImages.forEach((url, index) => {
-            // 1. 生成主图 Slide
             const slide = document.createElement('div');
             slide.className = 'slide';
             slide.id = `slide-${index}`;
             
-            // 使用高清优化图
             const mainImgUrl = getOptimizedUrl(url, 1200);
             
+            // 修复：移除 < img 之间的空格
             slide.innerHTML = `
-                <div class="error-msg">Loading...</div>
-                < img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Core Vision">
-                <!-- 保护层：覆盖在图片上，拦截长按 -->
+                <img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Photo ${index}">
                 <div class="protection-layer"></div>
             `;
             fragmentSlides.appendChild(slide);
 
-            // 2. 生成底部缩略图
             const thumb = document.createElement('div');
             thumb.className = 'thumb-wrapper';
-            // 缩略图使用更小的尺寸 (200px) 加速加载
             const thumbUrl = getOptimizedUrl(url, 200);
-            thumb.innerHTML = `< img src="${thumbUrl}">`;
             
-            // 点击缩略图跳转逻辑
+            // 修复：移除 < img 之间的空格
+            thumb.innerHTML = `<img src="${thumbUrl}">`;
+            
             thumb.addEventListener('click', () => {
                 document.getElementById(`slide-${index}`).scrollIntoView({ behavior: 'smooth' });
             });
@@ -338,9 +313,7 @@
         galleryViewport.appendChild(fragmentSlides);
         thumbsContainer.appendChild(fragmentThumbs);
 
-        // --- 交互逻辑 ---
-        
-        // 1. 监听滚动，高亮当前缩略图
+        // --- 交互与观察逻辑 ---
         const slides = document.querySelectorAll('.slide');
         const thumbs = document.querySelectorAll('.thumb-wrapper');
 
@@ -348,15 +321,11 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const index = Array.from(slides).indexOf(entry.target);
-                    
-                    // 激活大图动画
                     entry.target.classList.add('active');
-
-                    // 更新缩略图状态
+                    
                     thumbs.forEach(t => t.classList.remove('active'));
                     if(thumbs[index]) {
                         thumbs[index].classList.add('active');
-                        // 自动滚动缩略图条，保持当前选中的在视野内
                         thumbs[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                     }
                 } else {
@@ -367,29 +336,26 @@
 
         slides.forEach(slide => observer.observe(slide));
 
-        // 2. 移除加载动画
+        // Loading 逻辑
         window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
             setTimeout(() => {
-                const loader = document.getElementById('loader');
                 loader.style.opacity = '0';
                 setTimeout(() => {
                     loader.style.display = 'none';
-                    // 触发第一张图动画
                     if(slides[0]) slides[0].classList.add('active');
                     if(thumbs[0]) thumbs[0].classList.add('active');
                 }, 500);
-            }, 500); // 稍微等待一下确保DOM渲染
+            }, 500);
         });
 
-        // 3. 增强防护逻辑 (防止 F12 或 某些浏览器的特殊操作)
+        // 简单的防盗措施
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', event => {
-            // 禁止 F12, Ctrl+S, Ctrl+U
             if (event.key === 'F12' || (event.ctrlKey && (event.key === 's' || event.key === 'u'))) {
                 event.preventDefault();
             }
         });
-
     </script>
 </body>
 </html>
