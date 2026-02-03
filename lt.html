@@ -1,395 +1,1035 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>核 摄影 | CORE PHOTOGRAPHY</title>
+    <title>核 | THE NUCLEUS - 官方公告与预约</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- 核心基础设置 --- */
+        /* === 核心变量定义 === */
         :root {
-            --bg-color: #000000;
-            --text-main: #e0e0e0;
-            --accent: #ff3333; /* 核能红 */
-            --thumb-height: 60px;
+            /* 浅色模式 */
+            --bg-color: #f4f4f0;      
+            --text-primary: #1a1a1a;  
+            --text-secondary: #666666;
+            --accent: #bfa15f;        /* 哑光金 */
+            --warning: #d9534f;       /* 警示红 */
+            
+            --glass: rgba(244, 244, 240, 0.75); 
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            
+            --btn-bg: rgba(255,255,255,0.3);
+            --btn-hover: rgba(255,255,255,0.6);
+            --modal-bg: rgba(255, 255, 255, 0.98);
+            --curtain-color: #1a1a1a;
+            
+            --bg-overlay: rgba(255, 255, 255, 0.1); 
+        }
+
+        /* 深色模式 override */
+        [data-theme="dark"] {
+            --bg-color: #080808;
+            --text-primary: #e0e0e0;
+            --text-secondary: #aaaaaa; 
+            --accent: #d4af37;
+            --warning: #ff6b6b;
+            
+            --glass: rgba(15, 15, 15, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            
+            --btn-bg: rgba(0,0,0,0.3);
+            --btn-hover: rgba(50,50,50,0.4);
+            --modal-bg: rgba(20, 20, 20, 0.98);
+            --curtain-color: #000000;
+
+            --bg-overlay: rgba(0, 0, 0, 0.6); 
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
-            /* 禁止文字选择 */
-            user-select: none;
-            -webkit-user-select: none;
-            /* 禁止长按弹出菜单 */
-            -webkit-touch-callout: none;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            transition: color 0.5s ease, background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            overflow: hidden;
+            color: var(--text-primary);
+            font-family: 'Noto Serif SC', 'Playfair Display', serif;
+            overflow: hidden; 
             height: 100vh;
             width: 100vw;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
         }
 
-        /* --- 1. 顶部品牌栏 --- */
-        .header {
+        /* === 动态轮播背景 === */
+        #bg-slideshow {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
-            z-index: 100;
-            pointer-events: none; /* 让点击穿透，不影响图片滑动 */
-            text-align: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-        }
-
-        .brand-name {
-            font-size: 1.4rem;
-            font-weight: 900;
-            letter-spacing: 8px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            display: inline-block;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 5px;
-        }
-
-        .brand-sub {
-            font-size: 0.6rem;
-            letter-spacing: 3px;
-            opacity: 0.7;
-            margin-top: 4px;
-            font-family: Arial, sans-serif;
-        }
-
-        /* --- 返回主页按钮 --- */
-        .back-home-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 101;
-            pointer-events: auto;
-            width: 36px;
-            height: 36px;
-            background: rgba(20, 20, 20, 0.7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .back-home-btn:hover {
-            background: rgba(40, 40, 40, 0.9);
-            border-color: var(--accent);
-        }
-
-        .back-home-btn::before {
-            content: "←";
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        /* --- 2. 主画廊容器 (Scroll Snap) --- */
-        .gallery-viewport {
-            flex: 1;
-            width: 100%;
             height: 100%;
-            overflow-x: scroll;
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            display: flex;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
+            z-index: -2;
+            overflow: hidden;
         }
-        .gallery-viewport::-webkit-scrollbar { display: none; }
 
         .slide {
-            flex: 0 0 100%;
-            width: 100vw;
-            height: 100%;
-            scroll-snap-align: center;
-            scroll-snap-stop: always;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #050505;
-        }
-
-        /* 图片层 */
-        .slide img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain; /* 完整显示图片，不裁切 */
+            background-size: cover;
+            background-position: center;
             opacity: 0;
             transform: scale(1.05);
-            transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-            pointer-events: none; /* 关键：禁止直接点击图片 */
+            transition: opacity 1.5s ease-in-out, transform 8s linear;
         }
 
-        .slide.active img {
+        .slide.active {
             opacity: 1;
             transform: scale(1);
         }
 
-        /* --- 3. 关键保护层 (透明盾牌) --- */
-        /* 这个层覆盖在图片上，拦截所有长按和右键事件 */
-        .protection-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10; 
-            background: transparent;
-        }
-
-        /* --- 4. 底部缩略图导航 (快速切换) --- */
-        .thumbs-container {
-            height: 80px;
-            width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            border-top: 1px solid #222;
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            padding: 0 10px;
-            z-index: 100;
-        }
-
-        .thumb-wrapper {
-            flex: 0 0 auto;
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-            border-radius: 4px;
-            overflow: hidden;
-            opacity: 0.4;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-
-        .thumb-wrapper.active {
-            opacity: 1;
-            border-color: var(--accent);
-            transform: scale(1.1);
-        }
-
-        .thumb-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
-
-        /* --- 加载动画 --- */
-        #loader {
+        #bg-overlay-filter {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
-            z-index: 9999;
+            z-index: -1;
+            background-color: var(--bg-overlay);
+            backdrop-filter: blur(4px);
+            transition: background-color 0.5s ease;
+        }
+
+        .texture-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: overlay;
+        }
+
+        /* === 主题切换按钮 === */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        .loading-text {
-            margin-top: 15px;
-            font-size: 12px;
-            letter-spacing: 2px;
-            color: #666;
+        
+        .theme-toggle:hover {
+            transform: rotate(15deg) scale(1.1);
+            border-color: var(--accent);
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
 
-        /* 错误提示 */
-        .error-msg {
-            color: #555;
-            font-size: 12px;
+        /* === 主容器 === */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 88%;
+            max-width: 800px;
+            text-align: center;
+            padding: 50px 40px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px; 
+            box-shadow: var(--glass-shadow);
+            animation: fadeIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            letter-spacing: 0.6rem;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+            position: relative;
+            display: inline-block;
+            font-weight: 700;
+        }
+        
+        .logo::after {
+            content: 'NUCLEUS';
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 0.9rem;
+            color: var(--accent);
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin: 35px 0 45px 0;
+            line-height: 1.8;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+        /* 按钮区域 */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .btn {
+            position: relative;
+            padding: 0; 
+            height: 70px;
+            width: 100%;
+            max-width: 320px;
+            background: var(--btn-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 2;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            font-weight: 500;
+        }
+
+        .btn-sub {
+            font-size: 0.65rem !important;
+            opacity: 0.7;
+            margin-top: 4px;
+            font-family: 'Cinzel', serif !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase;
+        }
+
+        .btn-special {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+        .btn-special::before {
+             background: var(--warning);
+        }
+
+        .btn::before {
+            content: '';
             position: absolute;
-            z-index: -1;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+            transform-origin: bottom;
+        }
+
+        .btn:hover {
+            background: var(--btn-hover);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .btn-special:hover {
+            border-color: var(--warning);
+        }
+
+        .btn:hover::before {
+            transform: scaleY(1);
+        }
+        
+        /* 确认按钮样式 */
+        .btn-confirm {
+            margin-top: 20px;
+            background: var(--warning);
+            color: #fff !important;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-confirm:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 83, 79, 0.4);
+        }
+
+        @media (min-width: 768px) {
+            .options {
+                flex-direction: row;
+                justify-content: center;
+                gap: 20px;
+                flex-wrap: wrap; 
+            }
+            .btn {
+                width: 180px; 
+                height: 130px;
+            }
+        }
+
+        /* 联系方式 */
+        .contact-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .contact-pill {
+            display: flex;
+            align-items: center;
+            padding: 8px 20px;
+            border: 1px solid var(--glass-border);
+            background: var(--btn-bg);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        .contact-pill svg {
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            fill: var(--text-secondary);
+            transition: fill 0.3s ease;
+        }
+
+        .contact-pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--btn-hover);
+        }
+
+        .contact-pill:hover svg {
+            fill: var(--accent);
+        }
+
+        /* Toast */
+        #copy-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: var(--modal-bg);
+            border: 1px solid var(--accent);
+            color: var(--text-primary);
+            padding: 18px 35px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            border-radius: 2px;
+        }
+
+        #copy-toast.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        footer {
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            font-family: 'Cinzel', serif;
+            opacity: 0.7;
+        }
+
+        /* === 模态框通用 - 优化加载性能 === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        [data-theme="dark"] .modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            width: 92%;
+            max-width: 750px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 1.8rem;
+            line-height: 1;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s;
+            font-weight: 300;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        /* 公告特定样式 */
+        .announcement-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        /* 保持原文本段落间距 */
+        .announcement-text p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* 拒接名单警告框 */
+        .refusal-box {
+            margin-top: 10px;
+            padding: 25px;
+            border: 1px solid var(--warning);
+            background: rgba(217, 83, 79, 0.05); 
+            border-radius: 4px;
+            text-align: left;
+        }
+
+        .refusal-box h4 {
+            color: var(--warning);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-family: 'Noto Serif SC', serif;
+            display: flex;
+            align-items: center;
+        }
+        
+        .refusal-box h4::before {
+            content: '!';
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: 24px;
+            background: var(--warning);
+            color: #fff;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .refusal-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
+        .refusal-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .refusal-list li::before {
+            content: '×';
+            position: absolute;
+            left: 0;
+            color: var(--warning);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* 定价样式 */
+        .price-title {
+            font-family: 'Cinzel', serif;
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        
+        .price-title span {
+            color: var(--accent);
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .pricing-table th {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--accent);
+            padding: 12px 10px;
+            font-size: 0.85rem;
+        }
+
+        .pricing-table td {
+            padding: 18px 10px;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .price-tag {
+            color: var(--accent);
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+        }
+
+        .note-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .rules-box {
+            background: var(--btn-bg);
+            border-left: 2px solid var(--accent);
+            padding: 20px;
+            text-align: left;
+        }
+
+        .rules-box h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        .rules-box p {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--accent);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .transition-curtain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--curtain-color);
+            z-index: 100;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .transition-curtain.active {
+            transform: scaleY(1);
+            transform-origin: bottom;
         }
     </style>
+    
+    <!-- 关键：内联脚本确保公告弹窗第一时间加载 -->
+    <script>
+        // 检查是否首次访问
+        function isFirstVisit() {
+            const hasVisited = localStorage.getItem('hasVisited');
+            if (!hasVisited) {
+                localStorage.setItem('hasVisited', 'true');
+                return true;
+            }
+            return false;
+        }
+        
+        // 页面加载时立即检查并显示公告弹窗（不等待其他资源）
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保公告模态框在DOM加载完成后立即显示（如果是首次访问）
+            if (isFirstVisit()) {
+                const announcementModal = document.getElementById('announcementModal');
+                if (announcementModal) {
+                    // 立即显示，不等待其他资源
+                    announcementModal.classList.add('active');
+                    // 强制浏览器优先渲染模态框
+                    announcementModal.style.display = 'flex';
+                    announcementModal.style.visibility = 'visible';
+                }
+            }
+        });
+    </script>
 </head>
-<body oncontextmenu="return false"> <!-- 全局禁止右键 -->
+<body>
 
-    <!-- 加载页 -->
-    <div id="loader">
-        <div class="spinner"></div>
-        <div class="loading-text">LOADING CORE...</div>
+    <!-- 动态背景轮播 -->
+    <div id="bg-slideshow">
+        <div class="slide active" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/69789074a5720.webp')"></div>
+        <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890760e0c4.webp')"></div>
+        <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890761d817.webp')"></div>
+        <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/6978907664480.webp')"></div>
+        <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890767ac81.webp')"></div>
+        <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890887448c.webp')"></div>
     </div>
 
-    <!-- 返回主页按钮 -->
-    <a href="index.html" class="back-home-btn" title="返回主页"></a>
+    <!-- 背景遮罩 -->
+    <div id="bg-overlay-filter"></div>
+    <div class="texture-overlay"></div>
 
-    <!-- 顶部品牌 -->
-    <div class="header">
-        <div class="brand-name">核 摄影</div>
-        <div class="brand-sub">CORE VISION</div>
+    <!-- 深浅色切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" style="display:none;"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
     </div>
 
-    <!-- 主画廊 -->
-    <div class="gallery-viewport" id="galleryViewport">
-        <!-- JS生成 -->
+    <div class="transition-curtain" id="curtain"></div>
+    <div id="copy-toast"><span>✓</span> COPIED TO CLIPBOARD</div>
+
+    <!-- 1. 官方公告弹窗 (首次访问自动显示) -->
+    <div class="modal-overlay" id="announcementModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeAnnouncement()">×</div>
+            <h2 class="price-title" style="color: var(--warning);">官方公告 <span>|</span> NOTICE</h2>
+            
+            <div class="announcement-text">
+                <p>关于我方与"缺单版的大G（詩）"相关争议的官方公告</p>
+                <p>尊敬的社会各界：<br>为澄清事实真相、明确法律边界、规范争议处置，现就我方摄影团队（全体成员均为未成年人）与微信群"大G的福利约妆群"群主"缺单版的大G（詩）"（以下简称"相对方"）之间的相关争议，依据《中华人民共和国民法典》《中华人民共和国治安管理处罚法》等法律法规，发布本公告，供社会各界知悉。</p>
+                
+                <p>一、基本事实陈述</p>
+                
+                <p>（一）合作性质与主体属性</p>
+                <p>我方系未成年人自发组建的摄影兴趣团队，非商业主体，未办理工商登记，无营利经营资质。我方与相对方达成无偿互勉约拍合意，全程投入时间、精力完成拍摄及后期制作，未收取任何费用、未获取任何物质报酬，合作属兴趣导向的无偿互助行为，无任何商业交易属性。</p>
+                
+                <p>（二）行业从业自由的法律界定</p>
+                <p>我方此前虽在相关群聊作出口头"退出摄影行业"表述，但我国现行法律法规未规定"口头承诺退出行业后禁止重新进入"。依据《中华人民共和国民法典》第五条，民事主体从事民事活动遵循自愿原则，是否从事摄影创作、何时开展或终止相关活动，系我方合法民事权利，不受口头表述及他人非法干涉，任何主体无权以此指责我方合法摄影创作与样片展示行为。</p>
+                
+                <p>（三）照片使用与传播的客观情况</p>
+                <p>1. 约拍后，我方因内部协调向相对方告知"后续不再开展拍摄合作"，后因团队内部沟通衔接失误，一名成员未知晓前述协调结果，将相关宣传海报转发至相对方管理的"大G的福利约妆群"（群成员38人）。该海报仅包含价格表，无任何照片及缩略图，仅底部设置二维码，相关人员需依次完成"扫描二维码→进入展示网站→点击例图"三步操作，方可查看相关照片，传播路径极具隐蔽性，实际曝光范围极有限。</p>
+                <p>2. 我方将本次约拍部分照片上传至自建展示网站，仅用于呈现摄影技术水平；网站虽设付费约拍链接标识，但实际未通过相对方照片产生任何付费订单，后续承接的所有订单均为首次免费约拍订单，无任何经济收益与相对方照片存在关联，不构成法律意义上的"商用"行为。</p>
+                <p>3. 争议发生后，我方已第一时间将网站及所有渠道中涉及相对方的照片全部删除，彻底消除可能存在的相关影响，无任何遗留问题。</p>
+                <p>4. 基于本次争议相关情况，我方现作出两项决定：一是取消首次免费约拍相关服务；二是恕不接待两类人员的约拍需求，分别为：在"缺单版的大G（詩）"处化妆的人员、于本次争议中对我方实施嘲讽、恶意贬低及辱骂行为的人员，该决定系我方合法自主选择权，不违反任何法律法规。</p>
+                
+                <p>（四）争议升级的相关事实</p>
+                <p>1. 相对方发现照片展示行为后，主张我方侵犯其肖像权，我方就团队沟通失误及照片使用的客观情况作出详细解释，未获相对方认可。</p>
+                <p>2. 相对方及部分群成员在"大G的福利约妆群"内，针对我方实施系列行为：一是公开提及我方重度抑郁症、双相情感障碍病情，使用"精神病""自s自c当盾牌"等侮辱性表述；二是发布"大年在局子或精神病院度过"等言论；三是通过表情包及"逆天""一言难尽"等评论实施调侃；四是在38人公开群聊中，无任何隐私保护措施，公开讨论我方具体病情诊断信息。</p>
+                <p>3. 相对方提出前往重庆两江新区派出所处理争议，我方明确告知：因全体成员均为未成年人，需监护人陪同到场；且派出所对未成年人之间的民事争议仅具调解职能，无行政处罚权限，我方完全不接受任何形式调解。相对方拒绝私下调解，对我方前述合法程序要求表示不满。</p>
+                
+                <p>二、法律关系界定</p>
+                
+                <p>（一）我方照片使用行为的法律性质</p>
+                <p>依据《中华人民共和国民法典》第一千零一十九条、第一千零二十条，肖像权侵权需满足"以营利为目的"或"丑化、污损、利用信息技术手段伪造他人肖像"等法定要件。我方行为：一是无营利目的，未通过相对方照片获取任何经济利益，付费订单与相对方照片无任何关联；二是无主观恶意，未对相对方肖像实施丑化、污损，仅用于技术展示；三是已及时彻底删除全部照片，未造成任何不良后果；四是从业进退及约拍服务调整系合法权利。该行为不构成肖像权侵权，仅为民事主体间因沟通失误引发的一般民事争议，且我方已完成全部补救措施。</p>
+                
+                <p>（二）相对方相关行为的法律评价</p>
+                <p>1. 公然侮辱、威胁行为：依据《中华人民共和国治安管理处罚法》第四十二条，"公然侮辱他人或捏造事实诽谤他人""威胁他人人身安全"均属违法行为。相对方及部分群成员在38人公开群聊中，以不特定多数人可获知的方式实施侮辱、威胁行为，符合前述违法情形。</p>
+                <p>2. 隐私侵权行为：依据《中华人民共和国民法典》第一千零三十三条，自然人私密信息受法律保护，任何组织、个人不得非法泄露、公开。我方病情诊断信息属私密信息，相对方及部分群成员未经我方同意公开讨论，已构成隐私权侵害。</p>
+                <p>3. 行为后果：相对方明知我方患有严重心理疾病，仍针对性实施上述行为，客观上加重我方精神负担，主观过错与客观危害关联性明确，情节恶劣。</p>
+                
+                <p>三、我方立场与处理原则</p>
+                
+                <p>（一）民事争议处理</p>
+                <p>针对照片使用引发的一般民事争议，我方已彻底删除全部照片，无继续争议的事实基础。若相对方坚持认为我方存在侵权，可依据《中华人民共和国民事诉讼法》规定，向有管辖权的人民法院提起民事诉讼，我方将依法配合司法程序，如实陈述事实、提交证据；若相对方不对我方提起诉讼，本次争议即告一段落。</p>
+                
+                <p>（二）合法权益维护</p>
+                <p>针对"缺单版的大G（詩）"及部分群成员的侮辱、威胁、泄露隐私等行为，我方已固定完整证据（含群聊记录截图、私聊记录截图、网站后台无盈利数据、医院诊断证明、照片删除录屏、部分群内成员证词等）。若相对方对我方提起民事诉讼，我方将在监护人陪同下，依据《中华人民共和国治安管理处罚法》等规定，向公安机关报案，请求依法调查处理相关违法行为，维护我方人格权、隐私权等合法权益。</p>
+                
+                <p>（三）行业从业与服务权利</p>
+                <p>1. 我方重申，从事摄影创作系我方合法民事权利，不受任何非法干涉；口头退圈不产生法律约束力，我方有权自主决定是否重新开展摄影活动。</p>
+                <p>2. 我方调整约拍服务（取消首次免费约拍、明确不接待特定人员），系行使合法自主选择权，符合自愿公平原则，不违反法律法规强制性规定，任何主体无权干涉。</p>
+                <p>3. 后续我方将秉持合法合规原则开展摄影相关活动，严格遵守民法典关于肖像权、隐私权的相关规定，依法保障合作方合法权益，坚守摄影创作初心。</p>
+                
+                <p>四、后续事宜说明</p>
+                <p>1. 本公告发布后，若相对方提起民事诉讼，我方将依法应诉，并同步启动合法维权程序；若相对方未对我方提起诉讼，本次争议即告终结，我方不再回应相关事宜，亦不主动追究本次争议相关责任。</p>
+                <p>2. 我方将妥善保管全部证据材料，若后续遭遇"缺单版的大G（詩）"或相关人员二次侵权（含嘲讽、骚扰、诋毁等），将依法追究其相应法律责任，绝不姑息。</p>
+                <p>3. 本公告内容均基于客观事实及相关法律法规，无虚假陈述、无违法表述、无任何威胁性言论，相关证据可随时接受司法机关及相关部门核查，愿接受社会各界监督。</p>
+                
+                <p>特此公告。</p>
+            </div>
+        </div>
     </div>
 
-    <!-- 底部缩略图 -->
-    <div class="thumbs-container" id="thumbsContainer">
-        <!-- JS生成 -->
+    <!-- 2. 预约警告弹窗 (点击立即约拍触发) -->
+    <div class="modal-overlay" id="bookingWarningModal">
+        <div class="modal-content" style="max-width: 550px; text-align: center;">
+            <div class="close-modal" onclick="closeBookingWarning()">×</div>
+            <h2 class="price-title" style="color: var(--warning); margin-bottom: 20px;">预约前告知 <span>|</span> NOTICE</h2>
+            
+            <div class="refusal-box">
+                <h4>重点告知：恕不接待以下人员</h4>
+                <ul class="refusal-list">
+                    <li>在"缺单版的大G（詩）"处化妆的人员</li>
+                    <li>于本次争议中对我方实施嘲讽、恶意贬低及辱骂行为的人员</li>
+                </ul>
+                <p style="font-size: 0.8rem; margin-top: 15px; color: var(--text-secondary); border-top: 1px solid var(--warning); padding-top: 10px;">
+                    * 该决定系我方合法自主选择权，不违反任何法律法规。
+                </p>
+            </div>
+
+            <button class="btn-confirm" onclick="proceedToBooking()">
+                我已知晓，继续预约
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. 定价模态框 -->
+    <div class="modal-overlay" id="pricingModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closePricing()">×</div>
+            <h2 class="price-title">服务与定价 <span>|</span> PRICING</h2>
+            
+            <div class="table-wrapper">
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>服务项目</th>
+                            <th>价格</th>
+                            <th>内容详情</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>跟拍服务</td>
+                            <td class="price-tag">¥58.5</td>
+                            <td>6小时 / 不限地点</td>
+                            <td class="note-text">超时¥14.7/h<br>车费实报实销</td>
+                        </tr>
+                        <tr>
+                            <td>定点套餐 A</td>
+                            <td class="price-tag">¥26.4</td>
+                            <td>单一地点 / 4张原片</td>
+                            <td class="note-text">车费实报实销</td>
+                        </tr>
+                        <tr>
+                            <td>定点套餐 B</td>
+                            <td class="price-tag">¥38.6</td>
+                            <td>单一地点 / 6张原片</td>
+                            <td class="note-text">车费实报实销</td>
+                        </tr>
+                        <tr>
+                            <td>定点套餐 C</td>
+                            <td class="price-tag">¥49.8</td>
+                            <td>单一地点 / 8张原片</td>
+                            <td class="note-text">车费实报实销</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="rules-box">
+                <h4>预约须知 & 定金 (Deposit)</h4>
+                <p>❖ <strong>预约政策调整：</strong>由于近期争议，<span class="highlight">首次免费约拍服务已取消</span>。</p>
+                <p>❖ <strong>定金缴纳：</strong>所有约拍需缴纳总价值 <span class="highlight">30%</span> 作为定金以锁定档期。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo">核</div>
+        
+        <p class="quote">
+            "Time is a lens, and memory is the light that passes through it."<br>
+            <span style="font-size: 0.8em; opacity: 0.7; margin-top: 8px; display:block;">— 时间即透镜，记忆乃光影 —</span>
+        </p>
+
+        <div class="options">
+            <a onclick="openPricing()" class="btn">
+                <span>了解详情</span>
+                <span class="btn-sub">Details & Pricing</span>
+            </a>
+
+            <a onclick="navigateTo('lt.html')" class="btn">
+                <span>客片例图</span>
+                <span class="btn-sub">Gallery & Works</span>
+            </a>
+
+            <!-- 点击触发警告弹窗，而非直接跳转 -->
+            <a onclick="openBookingWarning()" class="btn">
+                <span>立即约拍</span>
+                <span class="btn-sub">Booking</span>
+            </a>
+            
+            <a onclick="openAnnouncement()" class="btn btn-special">
+                <span>官方公告</span>
+                <span class="btn-sub">Public Notice</span>
+            </a>
+        </div>
+
+        <div class="contact-bar">
+            <div class="contact-pill" onclick="copyText('kck_wepo2021', '微信')">
+                <svg viewBox="0 0 24 24"><path d="M17.4,12.7c0-3.3-3-6-6.8-6C6.8,6.7,3.8,9.4,3.8,12.7c0,1.9,1,3.6,2.6,4.7c0.3,0.1,0.4,0.4,0.3,0.7l-0.6,2c-0.1,0.3,0.2,0.6,0.5,0.4l2.4-1.3c0.2-0.1,0.5-0.1,0.7,0c0.8,0.3,1.6,0.4,2.5,0.4C14.4,19.6,17.4,16.6,17.4,12.7z M20.5,14c0-2.6-2.6-4.8-5.7-4.8c-3.1,0-5.7,2.1-5.7,4.8c0,2.6,2.6,4.8,5.7,4.8c0.7,0,1.4-0.1,2-0.3c0.2-0.1,0.4-0.1,0.6,0l1.9,1.1c0.2,0.1,0.5-0.1,0.4-0.3l-0.5-1.6c-0.1-0.2,0-0.5,0.2-0.6C20,16.5,20.5,15.3,20.5,14z"/></svg>
+                WECHAT
+            </div>
+            <div class="contact-pill" onclick="copyText('343188619', 'QQ')">
+                <svg viewBox="0 0 24 24"><path d="M12,2.5c-4.1,0-7.4,3.1-7.4,7c0,2.7,1.6,5.1,3.9,6.2c-0.5,2-2.3,2.4-2.4,2.4c-0.2,0.1-0.3,0.3-0.2,0.5c0.1,0.2,0.3,0.3,0.5,0.3c0.4,0,3.5-0.2,4.8-2.5c0.3,0,0.6,0.1,0.9,0.1c0.3,0,0.6,0,0.9-0.1c1.3,2.3,4.4,2.5,4.8,2.5c0.2,0,0.4-0.1,0.5-0.3c0.1-0.2,0-0.4-0.2-0.5c-0.1,0-1.9-0.4-2.4-2.4c2.4-1.1,3.9-3.4,3.9-6.2C19.4,5.6,16.1,2.5,12,2.5z"/></svg>
+                QQ
+            </div>
+        </div>
+
+        <footer>
+            COPYRIGHT © 核 PHOTOGRAPHY<br>
+            <span style="font-size: 0.85em">DESIGNED FOR SOUL</span>
+        </footer>
     </div>
 
     <script>
-        // 原始图片链接
-        const rawImages = [
-            "https://img.yohuo.eu.org/1770026410148.jpg",
-            "https://img.yohuo.eu.org/1770026414751.jpg",
-            "https://img.yohuo.eu.org/1770026416882.jpg",
-            "https://img.yohuo.eu.org/1770026420305.jpg",
-            "https://img.yohuo.eu.org/1770026423955.jpg",
-            "https://img.yohuo.eu.org/1770026427484.jpg",
-            "https://img.yohuo.eu.org/1770026430823.jpg",
-            "https://img.yohuo.eu.org/1770026434271.jpg",
-            "https://img.yohuo.eu.org/1770026436801.jpg",
-            "https://img.yohuo.eu.org/1770026441576.jpg",
-            "https://img.yohuo.eu.org/1770026446158.jpg",
-            "https://img.yohuo.eu.org/1770026449133.jpg",
-            "https://img.yohuo.eu.org/1770026451808.jpg",
-            "https://img.yohuo.eu.org/1770026454665.jpg",
-            "https://img.yohuo.eu.org/1770026457762.jpg",
-            "https://img.yohuo.eu.org/1770026462939.jpg",
-            "https://img.yohuo.eu.org/1770026469047.jpeg"
-        ];
+        // === 1. 深浅色模式切换逻辑 ===
+        const html = document.documentElement;
+        const iconSun = document.querySelector('.icon-sun');
+        const iconMoon = document.querySelector('.icon-moon');
 
-        // --- 核心优化：生成 CDN 加速链接 ---
-        // 使用 wsrv.nl 将图片转换为 WebP 并进行压缩，大幅提升国内加载速度
-        const getOptimizedUrl = (url, width = 1080) => {
-            // 去除 https:// 前缀以适配 CDN 参数
-            const cleanUrl = url.replace(/^https?:\/\//, '');
-            // &output=webp: 强制 WebP 格式
-            // &w={width}: 限制宽度，减少流量
-            // &q=80: 80% 质量，肉眼无损但体积更小
-            return `https://wsrv.nl/?url=${cleanUrl}&w=${width}&output=webp&q=80`;
-        };
+        function toggleTheme() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            updateIcons(newTheme);
+        }
 
-        const galleryViewport = document.getElementById('galleryViewport');
-        const thumbsContainer = document.getElementById('thumbsContainer');
-        const fragmentSlides = document.createDocumentFragment();
-        const fragmentThumbs = document.createDocumentFragment();
+        function updateIcons(theme) {
+            if (theme === 'dark') {
+                iconMoon.style.display = 'none';
+                iconSun.style.display = 'block';
+            } else {
+                iconSun.style.display = 'none';
+                iconMoon.style.display = 'block';
+            }
+        }
 
-        // 动态生成内容
-        rawImages.forEach((url, index) => {
-            // 1. 生成主图 Slide
-            const slide = document.createElement('div');
-            slide.className = 'slide';
-            slide.id = `slide-${index}`;
-            
-            // 使用高清优化图
-            const mainImgUrl = getOptimizedUrl(url, 1200);
-            
-            slide.innerHTML = `
-                <div class="error-msg">Loading...</div>
-                <img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Core Vision">
-                <!-- 保护层：覆盖在图片上，拦截长按 -->
-                <div class="protection-layer"></div>
-            `;
-            fragmentSlides.appendChild(slide);
+        updateIcons('light');
 
-            // 2. 生成底部缩略图
-            const thumb = document.createElement('div');
-            thumb.className = 'thumb-wrapper';
-            // 缩略图使用更小的尺寸 (200px) 加速加载
-            const thumbUrl = getOptimizedUrl(url, 200);
-            thumb.innerHTML = `<img src="${thumbUrl}">`;
-            
-            // 点击缩略图跳转逻辑
-            thumb.addEventListener('click', () => {
-                document.getElementById(`slide-${index}`).scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            fragmentThumbs.appendChild(thumb);
-        });
-
-        galleryViewport.appendChild(fragmentSlides);
-        thumbsContainer.appendChild(fragmentThumbs);
-
-        // --- 交互逻辑 ---
-        
-        // 1. 监听滚动，高亮当前缩略图
+        // === 2. 背景轮播逻辑 ===
         const slides = document.querySelectorAll('.slide');
-        const thumbs = document.querySelectorAll('.thumb-wrapper');
+        let currentSlide = 0;
+        const slideInterval = 6000; 
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const index = Array.from(slides).indexOf(entry.target);
-                    
-                    // 激活大图动画
-                    entry.target.classList.add('active');
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
 
-                    // 更新缩略图状态
-                    thumbs.forEach(t => t.classList.remove('active'));
-                    if(thumbs[index]) {
-                        thumbs[index].classList.add('active');
-                        // 自动滚动缩略图条，保持当前选中的在视野内
-                        thumbs[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
-                } else {
-                    entry.target.classList.remove('active');
-                }
-            });
-        }, { threshold: 0.5 });
+        setInterval(nextSlide, slideInterval);
 
-        slides.forEach(slide => observer.observe(slide));
+        // === 3. 定价模态框逻辑 ===
+        function openPricing() {
+            document.getElementById('pricingModal').classList.add('active');
+        }
 
-        // 2. 移除加载动画
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    // 触发第一张图动画
-                    if(slides[0]) slides[0].classList.add('active');
-                    if(thumbs[0]) thumbs[0].classList.add('active');
-                }, 500);
-            }, 500); // 稍微等待一下确保DOM渲染
-        });
+        function closePricing() {
+            document.getElementById('pricingModal').classList.remove('active');
+        }
 
-        // 3. 增强防护逻辑 (防止 F12 或 某些浏览器的特殊操作)
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.addEventListener('keydown', event => {
-            // 禁止 F12, Ctrl+S, Ctrl+U
-            if (event.key === 'F12' || (event.ctrlKey && (event.key === 's' || event.key === 'u'))) {
-                event.preventDefault();
+        document.getElementById('pricingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePricing();
             }
         });
 
+        // === 4. 官方公告模态框逻辑 ===
+        function openAnnouncement() {
+            document.getElementById('announcementModal').classList.add('active');
+        }
+
+        function closeAnnouncement() {
+            document.getElementById('announcementModal').classList.remove('active');
+        }
+
+        document.getElementById('announcementModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAnnouncement();
+            }
+        });
+
+        // === 5. 预约警告弹窗逻辑 (点击按钮触发) ===
+        function openBookingWarning() {
+            document.getElementById('bookingWarningModal').classList.add('active');
+        }
+
+        function closeBookingWarning() {
+            document.getElementById('bookingWarningModal').classList.remove('active');
+        }
+
+        // 确认后跳转
+        function proceedToBooking() {
+            closeBookingWarning();
+            // 延迟一点时间让弹窗关闭动画播放完，体验更好
+            setTimeout(() => {
+                navigateTo('ffyp.html');
+            }, 300);
+        }
+
+        document.getElementById('bookingWarningModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBookingWarning();
+            }
+        });
+
+        // === 6. 页面跳转逻辑 ===
+        function navigateTo(url) {
+            const curtain = document.getElementById('curtain');
+            const container = document.querySelector('.container');
+            container.style.transition = 'all 0.6s ease';
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            curtain.classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 800);
+        }
+
+        // === 7. 复制功能逻辑 ===
+        function copyText(text, label) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(label + ": " + text);
+                }).catch(err => {
+                    fallbackCopy(text, label);
+                });
+            } else {
+                fallbackCopy(text, label);
+            }
+        }
+
+        function fallbackCopy(text, label) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(label + ": " + text);
+            } catch (err) {
+                showToast("请手动复制");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('copy-toast');
+            toast.innerHTML = '<span>✓</span> ' + msg + ' 已复制';
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2500);
+        }
     </script>
 </body>
 </html>
