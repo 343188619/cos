@@ -3,38 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>核 摄影 | CORE PHOTOGRAPHY</title>
+    <title>核 | GALLERY例图</title>
+    <!-- 引入 Apple 风格字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Noto+Serif+SC:wght@500;700&family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- 核心基础设置 (浅色主题) --- */
         :root {
-            --bg-color: #ffffff;      /* 背景改白 */
-            --text-main: #333333;     /* 文字改深灰 */
-            --accent: #ff3333;        /* 核心红保持不变 */
-            --slide-bg: #f5f5f5;      /* 图片底色微灰 */
+            --bg-color: #f2f2f7;      /* iOS 系统背景色 */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-blur: blur(25px) saturate(180%);
+            --accent: #000000;
+            --ios-blue: #007aff;
+            --radius-dock: 24px;
         }
 
+        /* 修复 Android 快速滚动导致的视觉偏移 */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.4s;
         }
 
-        /* --- 1. 顶部品牌栏 --- */
+        /* --- 1. iOS 风格悬浮顶部栏 --- */
         .header {
             position: fixed;
             top: 0;
@@ -43,88 +48,50 @@
             padding: 15px 20px;
             padding-top: max(15px, env(safe-area-inset-top));
             z-index: 100;
-            pointer-events: none;
-            text-align: center;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.95) 60%, rgba(255,255,255,0));
+            background: rgba(242, 242, 247, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 0.5px solid rgba(0,0,0,0.1);
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
         }
 
-        /* Logo 样式 */
-        .brand-logo {
-            width: 60px; /* Logo 大小 */
-            height: auto;
-            object-fit: contain;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .brand-name {
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 6px;
-            color: #000;
-            display: inline-block;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 3px;
-        }
-
-        .brand-sub {
-            font-size: 0.55rem;
-            letter-spacing: 3px;
-            opacity: 0.6;
-            margin-top: 3px;
-            font-weight: 500;
-        }
-
-        /* --- 返回主页按钮 --- */
-        .back-home-btn {
-            position: fixed;
-            top: 20px;
+        /* 返回主页 - iOS 圆圈风格 */
+        .back-btn {
+            position: absolute;
             left: 20px;
-            top: max(20px, env(safe-area-inset-top));
-            z-index: 101;
-            pointer-events: auto;
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
             text-decoration: none;
-            cursor: pointer;
+            color: #000;
+            transition: background 0.2s;
+        }
+        .back-btn:active { background: rgba(0, 0, 0, 0.15); }
+
+        .brand-logo { width: 30px; height: auto; margin-right: 8px; }
+        .brand-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
         }
 
-        .back-home-btn:hover {
-            background: #fff;
-            border-color: var(--accent);
-            transform: scale(1.05);
-        }
-
-        .back-home-btn::before {
-            content: "←";
-            color: #333;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: -2px;
-        }
-
-        /* --- 2. 主画廊容器 --- */
+        /* --- 2. 主画廊视图 (优化流畅度) --- */
         .gallery-viewport {
             flex: 1;
             width: 100%;
-            height: 100%;
             overflow-x: scroll;
             overflow-y: hidden;
             scroll-snap-type: x mandatory;
             display: flex;
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
+            background: #fff;
         }
         .gallery-viewport::-webkit-scrollbar { display: none; }
 
@@ -133,13 +100,13 @@
             width: 100vw;
             height: 100%;
             scroll-snap-align: center;
-            scroll-snap-stop: always;
             position: relative;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--slide-bg);
+            overflow: hidden;
+            /* 启用硬件加速 */
+            will-change: transform;
         }
 
         .slide img {
@@ -149,10 +116,10 @@
             height: auto;
             object-fit: contain;
             opacity: 0;
-            transform: scale(1.05);
-            transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-            -webkit-user-drag: none;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+            transform: scale(0.98);
+            transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            /* 针对 Android 处理 */
+            image-rendering: -webkit-optimize-contrast;
         }
 
         .slide.active img {
@@ -160,146 +127,122 @@
             transform: scale(1);
         }
 
-        /* --- 修改处：正中间防盗水印样式 --- */
+        /* 水印逻辑保持不变 */
         .watermark {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg); /* 居中并微倾斜 */
-            
-            /* 修改：透明度从 0.4 改为 0.15，变得非常淡 */
-            color: rgba(255, 255, 255, 0.15); 
-            
-            font-size: 1.2rem;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            color: rgba(0, 0, 0, 0.08); /* 极淡黑色，自适应背景 */
+            font-size: 1rem;
             font-weight: bold;
-            letter-spacing: 2px;
-            pointer-events: none; /* 确保不影响点击 */
+            pointer-events: none;
             z-index: 20;
             white-space: nowrap;
-            
-            /* 修改：阴影也调淡了，从 0.2 改为 0.1 */
-            text-shadow: 0 0 10px rgba(0,0,0,0.1); 
-            
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
             user-select: none;
         }
 
-        @media (max-width: 768px) {
-            .watermark {
-                font-size: 0.9rem; /* 移动端字号缩小 */
-                width: 80%;
-                text-align: center;
-                white-space: normal;
-                line-height: 1.5;
-            }
-        }
+        [data-theme="dark"] .watermark { color: rgba(255, 255, 255, 0.1); }
 
         .protection-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 30; /* 调高层级，盖住水印和图片 */
-            background: transparent;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 30; background: transparent;
         }
 
-        /* --- 3. 底部缩略图 --- */
-        .thumbs-container {
-            height: 80px;
-            width: 100%;
-            background: #ffffff;
-            border-top: 1px solid #eee;
+        /* --- 3. 悬浮 Dock 缩略图栏 --- */
+        .dock-container {
+            position: fixed;
+            bottom: 30px;
+            bottom: calc(30px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 450px;
+            height: 70px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: var(--radius-dock);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             display: flex;
             align-items: center;
+            padding: 0 15px;
             overflow-x: auto;
-            padding: 0 10px;
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 100;
+            scrollbar-width: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            z-index: 110;
         }
+        .dock-container::-webkit-scrollbar { display: none; }
 
         .thumb-wrapper {
-            flex: 0 0 auto;
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-            border-radius: 4px;
+            flex: 0 0 44px;
+            height: 44px;
+            margin-right: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
-            background: #eee;
+            opacity: 0.4;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1.5px solid transparent;
+            background: #e1e1e1;
         }
 
         .thumb-wrapper.active {
             opacity: 1;
+            transform: scale(1.2);
+            margin: 0 15px; /* 放大效果间距 */
             border-color: var(--accent);
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .thumb-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
+            width: 100%; height: 100%; object-fit: cover;
         }
 
-        /* --- Loading --- */
+        /* --- 加载动画 (iOS Spinner) --- */
         #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .spinner {
-            width: 40px;
-            height: 40px;
+        .ios-spinner {
+            width: 32px; height: 32px;
             border: 3px solid #eee;
-            border-top-color: var(--accent);
+            border-top: 3px solid #000;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
-        .loading-text {
-            margin-top: 15px;
-            font-size: 12px;
-            letter-spacing: 2px;
-            color: #999;
-            font-weight: bold;
-        }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .brand-name { font-size: 0.9rem; }
+            .dock-container { width: 95%; height: 60px; }
+            .thumb-wrapper { flex: 0 0 36px; height: 36px; }
+            .watermark { font-size: 0.75rem; width: 80%; text-align: center; white-space: normal; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false">
 
     <div id="loader">
-        <div class="spinner"></div>
-        <div class="loading-text">LOADING CORE...</div>
+        <div class="ios-spinner"></div>
     </div>
 
-    <!-- 链接改为 index.html -->
-    <a href="index.html" class="back-home-btn" title="返回主页"></a>
-
     <div class="header">
-        <!-- 页面 Logo -->
+        <a href="index.html" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
         <img src="https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/698222cad5873.webp" class="brand-logo" alt="Logo">
-        <div class="brand-name">核 摄影</div>
-        <div class="brand-sub">CORE VISION</div>
+        <div class="brand-name">THE NUCLEUS GALLERY</div>
     </div>
 
     <div class="gallery-viewport" id="galleryViewport"></div>
-    <div class="thumbs-container" id="thumbsContainer"></div>
+    
+    <!-- 悬浮 Dock 缩略图 -->
+    <div class="dock-container" id="thumbsContainer"></div>
 
     <script>
+        // 核心例图数组保持不变
         const rawImages = [
             "https://img.yohuo.eu.org/1770026410148.jpg",
             "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c18a791f.webp",
@@ -322,90 +265,82 @@
             "https://img.yohuo.eu.org/1770026469047.jpeg"
         ];
 
-        // 优化链接生成
-        const getOptimizedUrl = (url, width = 1080) => {
+        // 智能图片服务优化
+        const getOptimizedUrl = (url, width) => {
             const cleanUrl = url.replace(/^https?:\/\//, '');
-            return `https://wsrv.nl/?url=${cleanUrl}&w=${width}&output=webp&q=80`;
+            // WebP 格式 + 自动尺寸，极大减轻安卓压力
+            return `https://wsrv.nl/?url=${cleanUrl}&w=${width}&output=webp&q=75`;
         };
 
         const galleryViewport = document.getElementById('galleryViewport');
         const thumbsContainer = document.getElementById('thumbsContainer');
-        const fragmentSlides = document.createDocumentFragment();
-        const fragmentThumbs = document.createDocumentFragment();
 
         rawImages.forEach((url, index) => {
-            // 生成 Slide
+            // 生成画廊项
             const slide = document.createElement('div');
             slide.className = 'slide';
             slide.id = `slide-${index}`;
             
-            const mainImgUrl = getOptimizedUrl(url, 1200);
-            
-            // 插入水印 HTML
+            // 使用 decoding="async" 提高滑动流畅度
+            const mainImgUrl = getOptimizedUrl(url, 1080);
             slide.innerHTML = `
-                <img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Core Vision ${index}">
-                <div class="watermark">核摄影工作室例图展示 请勿截图侵权</div>
+                <img src="${mainImgUrl}" 
+                     decoding="async"
+                     loading="${index < 2 ? 'eager' : 'lazy'}" 
+                     alt="Gallery Item ${index}">
+                <div class="watermark">核摄影工作室 例图展示</div>
                 <div class="protection-layer"></div>
             `;
-            fragmentSlides.appendChild(slide);
+            galleryViewport.appendChild(slide);
 
-            // 生成缩略图
+            // 生成 Dock 缩略图
             const thumb = document.createElement('div');
             thumb.className = 'thumb-wrapper';
-            const thumbUrl = getOptimizedUrl(url, 200);
-            
-            thumb.innerHTML = `<img src="${thumbUrl}">`;
-            
-            thumb.addEventListener('click', () => {
+            thumb.innerHTML = `<img src="${getOptimizedUrl(url, 120)}" decoding="async">`;
+            thumb.onclick = () => {
                 document.getElementById(`slide-${index}`).scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            fragmentThumbs.appendChild(thumb);
+            };
+            thumbsContainer.appendChild(thumb);
         });
 
-        galleryViewport.appendChild(fragmentSlides);
-        thumbsContainer.appendChild(fragmentThumbs);
-
-        // --- 交互逻辑 ---
+        // 监听滚动与激活状态
         const slides = document.querySelectorAll('.slide');
         const thumbs = document.querySelectorAll('.thumb-wrapper');
 
+        const observerOptions = {
+            root: galleryViewport,
+            threshold: 0.6
+        };
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
+                const index = Array.from(slides).indexOf(entry.target);
                 if (entry.isIntersecting) {
-                    const index = Array.from(slides).indexOf(entry.target);
                     entry.target.classList.add('active');
-                    
-                    thumbs.forEach(t => t.classList.remove('active'));
-                    if(thumbs[index]) {
-                        thumbs[index].classList.add('active');
-                        thumbs[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
+                    thumbs[index].classList.add('active');
+                    // 缩略图自动滚动居中
+                    thumbs[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 } else {
                     entry.target.classList.remove('active');
+                    thumbs[index].classList.remove('active');
                 }
             });
-        }, { threshold: 0.5 });
+        }, observerOptions);
 
         slides.forEach(slide => observer.observe(slide));
 
+        // 页面加载逻辑
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
             setTimeout(() => {
                 loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    if(slides[0]) slides[0].classList.add('active');
-                    if(thumbs[0]) thumbs[0].classList.add('active');
-                }, 500);
-            }, 500);
+                setTimeout(() => loader.style.display = 'none', 500);
+            }, 800);
         });
 
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.addEventListener('keydown', event => {
-            if (event.key === 'F12' || (event.ctrlKey && (event.key === 's' || event.key === 'u'))) {
-                event.preventDefault();
-            }
+        // 安全防护
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) e.preventDefault();
         });
     </script>
 </body>
