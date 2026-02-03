@@ -6,53 +6,65 @@
     <title>核 | THE NUCLEUS - 官方公告与预约</title>    
     <link rel="preconnect" href="https://fonts.googleapis.com">    
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;500;700&family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet">    <style>    
-    /* === 核心变量：Apple Liquid Retina 风格 === */    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;500;700&family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet">    
+    <style>    
+    /* === 核心变量：高透光 + 文字增强 === */    
     :root {    
-        /* 浅色模式 - 极致通透 */    
-        --bg-color: #f2f2f7;          
+        /* 浅色模式配置 */    
+        --bg-color: transparent; /* 全局背景透明 */         
         --text-primary: #000000;      
-        --text-secondary: #8a8a8e;    
-        --text-tertiary: #c7c7cc;    
+        --text-secondary: #3a3a3c; /* 加深一点副标题颜色以提高对比度 */   
+        --text-tertiary: #8e8e93;    
         --accent: #bfa15f;            
         --warning: #ff3b30;           
             
-        /* 液态玻璃核心 */    
-        --glass-bg: rgba(255, 255, 255, 0.75);    
-        --glass-blur: blur(25px) saturate(180%); /* 关键：高饱和度模糊 */    
+        /* === 玻璃质感关键调整 === */
+        /* 背景极大透明化：0.25 的不透明度 */
+        --glass-bg: rgba(255, 255, 255, 0.10);    
+        /* 模糊度降低到 20px，让视频轮廓更清晰，不再是一团雾 */
+        --glass-blur: blur(20px) saturate(180%);     
         --glass-border: rgba(255, 255, 255, 0.4);    
-        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);    
+        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);    
             
-        /* 菜单项交互 */    
-        --item-bg-hover: rgba(0, 0, 0, 0.04);    
-        --separator-color: rgba(60, 60, 67, 0.12); /* Apple 标准分割线 */    
-            
-        --modal-bg: rgba(255, 255, 255, 0.92);    
+        /* 菜单组背景：比主卡片稍微不透明一点，突出按钮区 */
+        --menu-group-bg: rgba(255, 255, 255, 0.15);
+        --item-bg-hover: rgba(255, 255, 255, 0.15);    
+        --separator-color: rgba(0, 0, 0, 0.1);    
+        
+        /* 关键：文字阴影 - 浅色模式下给文字加白边和淡阴影，防背景干扰 */
+        --text-shadow-main: 0 1px 1px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255,255,255, 0.5);
+
+        --modal-bg: rgba(255, 255, 255, 0.35); /* 弹窗保持较高不透明度，保证阅读体验 */
         --curtain-color: #000000;    
-        --bg-overlay: rgba(255, 255, 255, 0.1);    
+        --bg-overlay: rgba(255, 255, 255, 0.0);    
             
         --radius-box: 24px;    
         --radius-menu: 16px;    
     }    
 
-    /* 深色模式 - 深邃质感 */    
+    /* 深色模式配置 */    
     [data-theme="dark"] {    
-        --bg-color: #000000;    
+        --bg-color: transparent;    
         --text-primary: #ffffff;    
-        --text-secondary: #98989d;     
-        --text-tertiary: #48484a;    
+        --text-secondary: #ebebf5; /* 提亮副标题 */    
+        --text-tertiary: #98989d;    
         --accent: #d4af37;    
         --warning: #ff453a;           
             
-        --glass-bg: rgba(30, 30, 30, 0.70);    
-        --glass-border: rgba(255, 255, 255, 0.12);    
-        --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);    
+        /* 深色模式背景：0.30 不透明度，黑色玻璃 */
+        --glass-bg: rgba(0, 0, 0, 0.30);    
+        --glass-border: rgba(255, 255, 255, 0.15);    
+        --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6);    
             
-        --item-bg-hover: rgba(255, 255, 255, 0.08);    
-        --separator-color: rgba(84, 84, 88, 0.35);    
+        --menu-group-bg: rgba(60, 60, 60, 0.35);
+        --item-bg-hover: rgba(255, 255, 255, 0.15);    
+        --separator-color: rgba(255, 255, 255, 0.15);    
+        
+        /* 关键：文字阴影 - 深色模式下给文字加黑色投影，确保高亮背景下可见 */
+        --text-shadow-main: 0 2px 4px rgba(0, 0, 0, 0.8);
             
-        --modal-bg: rgba(28, 28, 30, 0.92);    
-        --bg-overlay: rgba(0, 0, 0, 0.45);     
+        --modal-bg: rgba(28, 28, 30, 0.90);    
+        --bg-overlay: rgba(0, 0, 0, 0.2); /* 深色模式稍微压暗一点点视频 */     
     }    
 
     /* 基础重置 */    
@@ -61,7 +73,6 @@
         padding: 0;    
         box-sizing: border-box;    
         -webkit-tap-highlight-color: transparent;    
-        /* 移除全局 transition，修复页面闪烁/消失 Bug */    
     }    
 
     body {    
@@ -74,11 +85,10 @@
         display: flex;    
         justify-content: center;    
         align-items: center;    
-        /* 只对背景色做过渡，保证性能 */    
-        transition: background-color 0.4s ease, color 0.4s ease;     
+        transition: color 0.4s ease;     
     }    
 
-    /* === 动态轮播背景 === */    
+    /* === 动态视频背景 === */    
     #bg-slideshow {    
         position: fixed;    
         top: 0;    
@@ -86,26 +96,20 @@
         width: 100%;    
         height: 100%;    
         z-index: -3;    
+        overflow: hidden;
     }    
 
-    .slide {    
-        position: absolute;    
-        top: 0;    
-        left: 0;    
-        width: 100%;    
-        height: 100%;    
-        background-size: cover;    
-        background-position: center;    
-        opacity: 0;    
-        transform: scale(1.08);    
-        transition: opacity 2s ease-in-out, transform 10s ease-out;    
-        will-change: opacity, transform;    
-    }    
-
-    .slide.active {    
-        opacity: 1;    
-        transform: scale(1);    
-    }    
+    #bg-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        object-fit: cover;
+    }
 
     #bg-overlay-filter {    
         position: fixed;    
@@ -115,26 +119,23 @@
         height: 100%;    
         z-index: -2;    
         background-color: var(--bg-overlay);    
-        backdrop-filter: blur(8px); /* 背景微模糊，突出主体 */    
         transition: background-color 0.4s ease;    
     }    
 
-    /* === 主容器：液态玻璃卡片 === */    
+    /* === 主容器：高透玻璃卡片 === */    
     .container {    
         position: relative;    
         z-index: 10;    
         width: 90%;    
-        max-width: 500px; /* 限制宽度以模仿手机菜单 */    
+        max-width: 500px; 
         text-align: center;    
         padding: 40px 30px;    
             
-        /* Apple 风格液态玻璃 */    
         background: var(--glass-bg);    
         backdrop-filter: var(--glass-blur);    
         -webkit-backdrop-filter: var(--glass-blur);    
         border-radius: var(--radius-box);    
             
-        /* 复合阴影和边框 */    
         box-shadow: var(--glass-shadow);    
         border: 1px solid var(--glass-border);    
             
@@ -147,7 +148,7 @@
         to { opacity: 1; transform: scale(1); }    
     }    
 
-    /* LOGO */    
+    /* LOGO - 增加阴影 */    
     .logo {    
         margin-bottom: 20px;    
         display: flex;    
@@ -161,7 +162,8 @@
         display: block;    
         margin-bottom: 8px;    
         object-fit: contain;    
-        filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));    
+        /* 增强的 Logo 投影，使其在透明背景上更立体 */
+        filter: drop-shadow(0 4px 15px rgba(0,0,0,0.25));    
     }    
         
     .logo::after {    
@@ -172,6 +174,8 @@
         letter-spacing: 0.8rem;    
         color: var(--accent);    
         font-weight: 600;    
+        /* 文字阴影 */
+        text-shadow: var(--text-shadow-main);
     }    
 
     .quote {    
@@ -181,21 +185,20 @@
         color: var(--text-secondary);    
         margin: 20px 0 35px 0;    
         line-height: 1.6;    
+        /* 文字阴影确保可读性 */
+        text-shadow: var(--text-shadow-main);
+        font-weight: 500;
     }    
 
     /* === Apple 风格菜单 (Grouped List) === */    
     .menu-group {    
-        background: rgba(255, 255, 255, 0.5); /* 菜单内部再叠加一层 */    
+        background: var(--menu-group-bg);    
         border-radius: var(--radius-menu);    
-        overflow: hidden; /* 圆角裁剪 */    
+        overflow: hidden;    
         margin-bottom: 30px;    
-        border: 0.5px solid var(--separator-color); /* 极细边框 */    
+        border: 1px solid var(--glass-border); /* 边框稍微加强一点 */
         display: flex;    
         flex-direction: column;    
-    }    
-
-    [data-theme="dark"] .menu-group {    
-        background: rgba(44, 44, 46, 0.4);    
     }    
 
     .menu-item {    
@@ -214,7 +217,6 @@
         background-color: var(--item-bg-hover);    
     }    
 
-    /* 桌面端 Hover 效果 */    
     @media (hover: hover) {    
         .menu-item:hover {    
             background-color: var(--item-bg-hover);    
@@ -226,11 +228,11 @@
         content: '';    
         position: absolute;    
         bottom: 0;    
-        left: 20px; /* iOS 风格左缩进 */    
+        left: 20px;    
         right: 0;    
         height: 1px;    
         background-color: var(--separator-color);    
-        transform: scaleY(0.5); /* 视网膜屏幕 0.5px 线条 */    
+        transform: scaleY(0.5);    
     }    
 
     .item-content {    
@@ -238,11 +240,13 @@
         flex-direction: column;    
         align-items: flex-start;    
         text-align: left;    
+        /* 给菜单文字也加阴影 */
+        text-shadow: var(--text-shadow-main);
     }    
 
     .item-title {    
         font-size: 1rem;    
-        font-weight: 500;    
+        font-weight: 600; /* 加粗一点点 */
         color: var(--text-primary);    
         margin-bottom: 2px;    
         font-family: 'Noto Serif SC', sans-serif;    
@@ -255,13 +259,13 @@
         font-family: 'Cinzel', serif;    
         text-transform: uppercase;    
         letter-spacing: 0.5px;    
+        font-weight: 600;
     }    
 
     /* 警告色 */    
-    .text-danger .item-title { color: var(--warning); }    
-    .text-danger .item-subtitle { color: rgba(255, 59, 48, 0.7); }    
+    .text-danger .item-title { color: var(--warning); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }    
+    .text-danger .item-subtitle { color: var(--warning); opacity: 0.9; }    
 
-    /* 右侧箭头 iOS 风格 */    
     .chevron {    
         width: 8px;    
         height: 14px;    
@@ -271,10 +275,11 @@
         stroke-linecap: round;    
         stroke-linejoin: round;    
         margin-left: 10px;    
-        opacity: 0.7;    
+        opacity: 0.9;
+        filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2)); /* 箭头也加一点阴影 */
     }    
 
-    /* 联系方式 - 极简圆圈 */    
+    /* 联系方式 */    
     .contact-row {    
         display: flex;    
         justify-content: center;    
@@ -286,24 +291,22 @@
         width: 44px;    
         height: 44px;    
         border-radius: 50%;    
-        background: var(--glass-bg); /* 与背景区分 */    
+        background: var(--menu-group-bg);    
         border: 1px solid var(--glass-border);    
         display: flex;    
         align-items: center;    
         justify-content: center;    
         cursor: pointer;    
         transition: transform 0.2s, background-color 0.2s;    
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);    
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 按钮阴影加深 */
     }    
 
-    .contact-btn:active {    
-        transform: scale(0.92);    
-    }    
+    .contact-btn:active { transform: scale(0.92); }    
         
     @media (hover: hover) {    
         .contact-btn:hover {    
             transform: scale(1.1);    
-            background: var(--bg-color);    
+            background: var(--glass-bg);    
         }    
     }    
 
@@ -312,13 +315,12 @@
         height: 20px;    
         fill: var(--text-secondary);    
         transition: fill 0.3s;    
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); /* 图标阴影 */
     }    
         
-    .contact-btn:hover svg {    
-        fill: var(--accent);    
-    }    
+    .contact-btn:hover svg { fill: var(--accent); }    
 
-    /* Theme Toggle - 顶部悬浮 */    
+    /* Theme Toggle */    
     .theme-toggle {    
         position: fixed;    
         top: 25px;    
@@ -335,13 +337,12 @@
         align-items: center;    
         cursor: pointer;    
         color: var(--text-primary);    
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);    
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);    
         transition: transform 0.3s;    
     }    
         
     .theme-toggle:active { transform: scale(0.9); }    
-
-    .theme-toggle svg { width: 20px; height: 20px; fill: currentColor; }    
+    .theme-toggle svg { width: 20px; height: 20px; fill: currentColor; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));}    
 
     /* Footer */    
     footer {    
@@ -349,17 +350,19 @@
         font-size: 0.65rem;    
         letter-spacing: 1px;    
         font-family: 'Cinzel', serif;    
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 页脚阴影加深 */
+        font-weight: 600;
     }    
 
-    /* === 模态框优化 === */    
+    /* === 模态框优化 (稍微不透明一些，保证阅读) === */    
     .modal-overlay {    
         position: fixed;    
         top: 0;    
         left: 0;    
         width: 100%;    
         height: 100%;    
-        background: rgba(0, 0, 0, 0.25);     
-        backdrop-filter: blur(10px); /* 背景深虚化 */    
+        background: rgba(0, 0, 0, 0.4); /* 背景压暗一点，突出弹窗 */    
+        backdrop-filter: blur(15px);    
         z-index: 200;    
         display: flex;    
         justify-content: center;    
@@ -376,13 +379,13 @@
 
     .modal-content {    
         background: var(--modal-bg);    
-        backdrop-filter: blur(40px) saturate(150%);    
-        -webkit-backdrop-filter: blur(40px) saturate(150%);    
+        backdrop-filter: blur(40px);    
+        -webkit-backdrop-filter: blur(40px);    
         width: 88%;    
         max-width: 650px;    
         padding: 35px 30px;    
         border-radius: var(--radius-box);    
-        box-shadow: 0 20px 60px rgba(0,0,0,0.25);    
+        box-shadow: 0 30px 80px rgba(0,0,0,0.3);    
         transform: scale(0.96);    
         transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);    
         position: relative;    
@@ -414,7 +417,6 @@
         
     .close-modal:hover { background: rgba(120, 120, 128, 0.25); }    
 
-    /* 内容样式 */    
     .announcement-text { font-size: 0.9rem; line-height: 1.7; text-align: left; }    
     .announcement-text p { margin-bottom: 15px; color: var(--text-primary); opacity: 0.9; }    
         
@@ -427,14 +429,12 @@
     }    
     .price-title span { color: var(--accent); margin: 0 5px; opacity: 0.7; }    
 
-    /* 定价表格 */    
     .pricing-table { width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 20px; }    
     .pricing-table th { font-size: 0.8rem; color: var(--text-secondary); border-bottom: 1px solid var(--separator-color); padding: 10px 5px; font-weight: 500; }    
     .pricing-table td { padding: 15px 5px; border-bottom: 1px solid var(--separator-color); font-size: 0.9rem; }    
     .price-tag { color: var(--accent); font-weight: 600; font-family: 'Cinzel', serif; }    
     .note-text { font-size: 0.75rem; color: var(--text-secondary); }    
 
-    /* 警告框 */    
     .refusal-box {    
         background: rgba(255, 59, 48, 0.08);    
         border: 1px solid rgba(255, 59, 48, 0.2);    
@@ -447,9 +447,8 @@
     .refusal-list li { list-style: none; padding-left: 20px; position: relative; margin-bottom: 8px; font-size: 0.9rem; }    
     .refusal-list li::before { content: '✕'; position: absolute; left: 0; color: var(--warning); }    
 
-    /* iOS 风格大按钮 */    
     .btn-ios {    
-        background-color: var(--warning); /* 默认红色警告色 */    
+        background-color: var(--warning);     
         color: white;    
         border: none;    
         width: 100%;    
@@ -460,6 +459,7 @@
         margin-top: 20px;    
         cursor: pointer;    
         transition: transform 0.1s, opacity 0.2s;    
+        box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
     }    
     .btn-ios:active { transform: scale(0.98); opacity: 0.9; }    
 
@@ -505,28 +505,32 @@
 </style>    
     
 <script>    
-    // 修改这里：强制弹出公告，不检查是否首次访问
+    // 首次访问弹窗逻辑
     document.addEventListener('DOMContentLoaded', function() {
-        // 直接弹出公告，不检查localStorage
-        const announcementModal = document.getElementById('announcementModal');
-        if (announcementModal) {
-            // 添加延迟确保页面加载完成
-            setTimeout(() => {
-                announcementModal.classList.add('active');
-            }, 500); // 500ms延迟，让页面完全加载
+        const announcementKey = 'nucleus_announcement_seen_2026';
+        const hasSeen = localStorage.getItem(announcementKey);
+
+        if (!hasSeen) {
+            const announcementModal = document.getElementById('announcementModal');
+            if (announcementModal) {
+                setTimeout(() => {
+                    announcementModal.classList.add('active');
+                    localStorage.setItem(announcementKey, 'true');
+                }, 500); 
+            }
         }
     });
 </script>
 
 </head>    
-<body>    <!-- 背景轮播 -->    
+<body>    
+
+<!-- 背景视频 -->    
 <div id="bg-slideshow">    
-    <div class="slide active" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/69789074a5720.webp')"></div>    
-    <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890760e0c4.webp')"></div>    
-    <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890761d817.webp')"></div>    
-    <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/6978907664480.webp')"></div>    
-    <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890767ac81.webp')"></div>    
-    <div class="slide" style="background-image: url('https://youke.xn--y7xa690gmna.cn/s1/2026/01/27/697890887448c.webp')"></div>    
+    <video id="bg-video" autoplay loop muted playsinline>
+        <source src="https://img.yohuo.eu.org/1770144887516.mp4" type="video/mp4">
+        您的浏览器不支持 HTML5 视频。
+    </video>
 </div>    
 
 <div id="bg-overlay-filter"></div>    
@@ -546,7 +550,6 @@
         <div class="close-modal" onclick="closeAnnouncement()">×</div>    
         <h2 class="price-title text-danger">官方公告 <span>|</span> NOTICE</h2>    
         <div class="announcement-text">    
-            <!-- 修改这里：更新公告内容 -->
             <p>本次争议事件期间，为了感谢各位的理解、支持与声援，使我方得以顺利厘清事实、维护合法权益。为表达诚挚谢意，我方特向各位提供如下礼遇：</p>
             <p>自本公告发布之日起，各位可于未来任意一次有偿约拍服务中，享受8.0折专属优惠，不限拍摄主题与档期，优惠长期有效。</p>
             <p>如需使用本优惠，可通过我方预约渠道中预约填写表单时填写特殊备注，并注明身份信息，我方将优先为您安排服务。</p>
@@ -664,7 +667,6 @@
     const iconMoon = document.querySelector('.icon-moon');    
 
     function toggleTheme() {    
-        // 简单的属性切换，不再触发复杂的重排    
         const currentTheme = html.getAttribute('data-theme');    
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';    
         html.setAttribute('data-theme', newTheme);    
@@ -678,20 +680,10 @@
         }    
     }    
         
-    // 初始化图标    
     if(html.getAttribute('data-theme') === 'dark') {    
         iconMoon.style.display = 'none';    
         iconSun.style.display = 'block';    
     }    
-
-    // === 轮播背景 ===    
-    const slides = document.querySelectorAll('.slide');    
-    let currentSlide = 0;    
-    setInterval(() => {    
-        slides[currentSlide].classList.remove('active');    
-        currentSlide = (currentSlide + 1) % slides.length;    
-        slides[currentSlide].classList.add('active');    
-    }, 6000);    
 
     // === 弹窗控制 ===    
     function openPricing() { document.getElementById('pricingModal').classList.add('active'); }    
@@ -703,7 +695,6 @@
     function openBookingWarning() { document.getElementById('bookingWarningModal').classList.add('active'); }    
     function closeBookingWarning() { document.getElementById('bookingWarningModal').classList.remove('active'); }    
 
-    // 点击遮罩关闭    
     document.querySelectorAll('.modal-overlay').forEach(overlay => {    
         overlay.addEventListener('click', function(e) {    
             if (e.target === this) this.classList.remove('active');    
@@ -724,7 +715,6 @@
     // === 复制功能 ===    
     function copyText(text, label) {    
         const toast = document.getElementById('copy-toast');    
-            
         if (navigator.clipboard && window.isSecureContext) {    
             navigator.clipboard.writeText(text).then(() => showToast(label + ": " + text))    
             .catch(() => fallbackCopy(text, label));    
