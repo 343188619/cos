@@ -40,29 +40,41 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
-            padding-top: max(20px, env(safe-area-inset-top));
+            padding: 15px 20px;
+            padding-top: max(15px, env(safe-area-inset-top));
             z-index: 100;
             pointer-events: none;
             text-align: center;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95) 60%, rgba(255,255,255,0));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Logo 样式 */
+        .brand-logo {
+            width: 60px; /* Logo 大小 */
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 5px;
+            display: block;
         }
 
         .brand-name {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 900;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             color: #000;
             display: inline-block;
             border-bottom: 2px solid var(--accent);
-            padding-bottom: 5px;
+            padding-bottom: 3px;
         }
 
         .brand-sub {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             letter-spacing: 3px;
             opacity: 0.6;
-            margin-top: 4px;
+            margin-top: 3px;
             font-weight: 500;
         }
 
@@ -148,13 +160,46 @@
             transform: scale(1);
         }
 
+        /* --- 修改处：正中间防盗水印样式 --- */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg); /* 居中并微倾斜 */
+            
+            /* 修改：透明度从 0.4 改为 0.15，变得非常淡 */
+            color: rgba(255, 255, 255, 0.15); 
+            
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: none; /* 确保不影响点击 */
+            z-index: 20;
+            white-space: nowrap;
+            
+            /* 修改：阴影也调淡了，从 0.2 改为 0.1 */
+            text-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+            .watermark {
+                font-size: 0.9rem; /* 移动端字号缩小 */
+                width: 80%;
+                text-align: center;
+                white-space: normal;
+                line-height: 1.5;
+            }
+        }
+
         .protection-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 10; 
+            z-index: 30; /* 调高层级，盖住水印和图片 */
             background: transparent;
         }
 
@@ -241,10 +286,12 @@
         <div class="loading-text">LOADING CORE...</div>
     </div>
 
-    <!-- ✅ 修改完成：链接改为 index.html -->
+    <!-- 链接改为 index.html -->
     <a href="index.html" class="back-home-btn" title="返回主页"></a>
 
     <div class="header">
+        <!-- 页面 Logo -->
+        <img src="https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/698222cad5873.webp" class="brand-logo" alt="Logo">
         <div class="brand-name">核 摄影</div>
         <div class="brand-sub">CORE VISION</div>
     </div>
@@ -255,9 +302,9 @@
     <script>
         const rawImages = [
             "https://img.yohuo.eu.org/1770026410148.jpg",
-            "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c18a791f.webp", // 第2张 (新)
+            "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c18a791f.webp",
             "https://img.yohuo.eu.org/1770026414751.jpg",
-            "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c19e15e6.webp", // 第4张 (新)
+            "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c19e15e6.webp",
             "https://img.yohuo.eu.org/1770026416882.jpg",
             "https://img.yohuo.eu.org/1770026420305.jpg",
             "https://img.yohuo.eu.org/1770026423955.jpg",
@@ -294,8 +341,10 @@
             
             const mainImgUrl = getOptimizedUrl(url, 1200);
             
+            // 插入水印 HTML
             slide.innerHTML = `
                 <img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Core Vision ${index}">
+                <div class="watermark">核摄影工作室例图展示 请勿截图侵权</div>
                 <div class="protection-layer"></div>
             `;
             fragmentSlides.appendChild(slide);
