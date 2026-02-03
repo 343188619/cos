@@ -68,6 +68,38 @@
             font-family: Arial, sans-serif;
         }
 
+        /* --- 返回主页按钮 --- */
+        .back-home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+            pointer-events: auto;
+            width: 36px;
+            height: 36px;
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .back-home-btn:hover {
+            background: rgba(40, 40, 40, 0.9);
+            border-color: var(--accent);
+        }
+
+        .back-home-btn::before {
+            content: "←";
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         /* --- 2. 主画廊容器 (Scroll Snap) --- */
         .gallery-viewport {
             flex: 1;
@@ -212,6 +244,9 @@
         <div class="spinner"></div>
         <div class="loading-text">LOADING CORE...</div>
     </div>
+
+    <!-- 返回主页按钮 -->
+    <a href="index.html" class="back-home-btn" title="返回主页"></a>
 
     <!-- 顶部品牌 -->
     <div class="header">
