@@ -2,15 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 增加 viewport-fit=cover 适配刘海屏 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>核 摄影 | CORE PHOTOGRAPHY</title>
     <style>
-        /* --- 核心基础设置 --- */
+        /* --- 核心基础设置 (浅色主题) --- */
         :root {
-            --bg-color: #000000;
-            --text-main: #e0e0e0;
-            --accent: #ff3333; 
+            --bg-color: #ffffff;      /* 背景改白 */
+            --text-main: #333333;     /* 文字改深灰 */
+            --accent: #ff3333;        /* 核心红保持不变 */
+            --slide-bg: #f5f5f5;      /* 图片底色微灰 */
         }
 
         * {
@@ -41,19 +41,18 @@
             left: 0;
             width: 100%;
             padding: 20px;
-            padding-top: max(20px, env(safe-area-inset-top)); /* 适配刘海 */
+            padding-top: max(20px, env(safe-area-inset-top));
             z-index: 100;
             pointer-events: none;
             text-align: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
         }
 
         .brand-name {
             font-size: 1.4rem;
             font-weight: 900;
             letter-spacing: 8px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            color: #000;
             display: inline-block;
             border-bottom: 2px solid var(--accent);
             padding-bottom: 5px;
@@ -62,8 +61,9 @@
         .brand-sub {
             font-size: 0.6rem;
             letter-spacing: 3px;
-            opacity: 0.7;
+            opacity: 0.6;
             margin-top: 4px;
+            font-weight: 500;
         }
 
         /* --- 返回主页按钮 --- */
@@ -71,30 +71,32 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            top: max(20px, env(safe-area-inset-top)); /* 适配刘海 */
+            top: max(20px, env(safe-area-inset-top));
             z-index: 101;
             pointer-events: auto;
             width: 36px;
             height: 36px;
-            background: rgba(20, 20, 20, 0.7);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             text-decoration: none;
             cursor: pointer;
         }
 
         .back-home-btn:hover {
-            background: rgba(40, 40, 40, 0.9);
+            background: #fff;
             border-color: var(--accent);
+            transform: scale(1.05);
         }
 
         .back-home-btn::before {
             content: "←";
-            color: #fff;
+            color: #333;
             font-size: 18px;
             font-weight: bold;
             margin-top: -2px;
@@ -125,10 +127,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #000;
+            background: var(--slide-bg);
         }
 
-        /* 图片样式 */
         .slide img {
             max-width: 100%;
             max-height: 100%;
@@ -138,8 +139,8 @@
             opacity: 0;
             transform: scale(1.05);
             transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-            /* 禁止拖拽图片 */
             -webkit-user-drag: none;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
         }
 
         .slide.active img {
@@ -147,8 +148,6 @@
             transform: scale(1);
         }
 
-        /* 保护层：如果你希望禁止右键保存，保留这个。
-           注意：这会阻止双指放大。如果需要放大，需删除此层并仅依赖 oncontextmenu */
         .protection-layer {
             position: absolute;
             top: 0;
@@ -163,13 +162,13 @@
         .thumbs-container {
             height: 80px;
             width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            border-top: 1px solid #222;
+            background: #ffffff;
+            border-top: 1px solid #eee;
             display: flex;
             align-items: center;
             overflow-x: auto;
             padding: 0 10px;
-            padding-bottom: env(safe-area-inset-bottom); /* 适配底部横条 */
+            padding-bottom: env(safe-area-inset-bottom);
             z-index: 100;
         }
 
@@ -180,16 +179,18 @@
             margin-right: 10px;
             border-radius: 4px;
             overflow: hidden;
-            opacity: 0.4;
+            opacity: 0.5;
             transition: all 0.3s ease;
-            border: 1px solid transparent;
+            border: 2px solid transparent;
             cursor: pointer;
+            background: #eee;
         }
 
         .thumb-wrapper.active {
             opacity: 1;
             border-color: var(--accent);
-            transform: scale(1.1);
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .thumb-wrapper img {
@@ -206,7 +207,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: #ffffff;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -217,7 +218,7 @@
         .spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
+            border: 3px solid #eee;
             border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -226,21 +227,22 @@
             margin-top: 15px;
             font-size: 12px;
             letter-spacing: 2px;
-            color: #666;
+            color: #999;
+            font-weight: bold;
         }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body oncontextmenu="return false">
 
-    <!-- 加载页 -->
     <div id="loader">
         <div class="spinner"></div>
         <div class="loading-text">LOADING CORE...</div>
     </div>
 
-    <!-- 修复：href 改为 # 或者你的实际主页链接，例如 index.html -->
-    <a href="#" class="back-home-btn" title="返回主页"></a>
+    <!-- ✅ 修改完成：链接改为 index.html -->
+    <a href="index.html" class="back-home-btn" title="返回主页"></a>
 
     <div class="header">
         <div class="brand-name">核 摄影</div>
@@ -253,7 +255,9 @@
     <script>
         const rawImages = [
             "https://img.yohuo.eu.org/1770026410148.jpg",
+            "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c18a791f.webp", // 第2张 (新)
             "https://img.yohuo.eu.org/1770026414751.jpg",
+            "https://youke.xn--y7xa690gmna.cn/s1/2026/02/04/69821c19e15e6.webp", // 第4张 (新)
             "https://img.yohuo.eu.org/1770026416882.jpg",
             "https://img.yohuo.eu.org/1770026420305.jpg",
             "https://img.yohuo.eu.org/1770026423955.jpg",
@@ -271,7 +275,7 @@
             "https://img.yohuo.eu.org/1770026469047.jpeg"
         ];
 
-        // 图片优化参数
+        // 优化链接生成
         const getOptimizedUrl = (url, width = 1080) => {
             const cleanUrl = url.replace(/^https?:\/\//, '');
             return `https://wsrv.nl/?url=${cleanUrl}&w=${width}&output=webp&q=80`;
@@ -283,24 +287,24 @@
         const fragmentThumbs = document.createDocumentFragment();
 
         rawImages.forEach((url, index) => {
+            // 生成 Slide
             const slide = document.createElement('div');
             slide.className = 'slide';
             slide.id = `slide-${index}`;
             
             const mainImgUrl = getOptimizedUrl(url, 1200);
             
-            // 修复：移除 < img 之间的空格
             slide.innerHTML = `
-                <img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Photo ${index}">
+                <img src="${mainImgUrl}" loading="${index < 2 ? 'eager' : 'lazy'}" alt="Core Vision ${index}">
                 <div class="protection-layer"></div>
             `;
             fragmentSlides.appendChild(slide);
 
+            // 生成缩略图
             const thumb = document.createElement('div');
             thumb.className = 'thumb-wrapper';
             const thumbUrl = getOptimizedUrl(url, 200);
             
-            // 修复：移除 < img 之间的空格
             thumb.innerHTML = `<img src="${thumbUrl}">`;
             
             thumb.addEventListener('click', () => {
@@ -313,7 +317,7 @@
         galleryViewport.appendChild(fragmentSlides);
         thumbsContainer.appendChild(fragmentThumbs);
 
-        // --- 交互与观察逻辑 ---
+        // --- 交互逻辑 ---
         const slides = document.querySelectorAll('.slide');
         const thumbs = document.querySelectorAll('.thumb-wrapper');
 
@@ -336,7 +340,6 @@
 
         slides.forEach(slide => observer.observe(slide));
 
-        // Loading 逻辑
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
             setTimeout(() => {
@@ -349,7 +352,6 @@
             }, 500);
         });
 
-        // 简单的防盗措施
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', event => {
             if (event.key === 'F12' || (event.ctrlKey && (event.key === 's' || event.key === 'u'))) {
